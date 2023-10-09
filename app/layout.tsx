@@ -1,6 +1,5 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
-import { cookies } from 'next/headers'
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -14,41 +13,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const username = cookies().has('username');
-
-  if (!username) {
-    return (
-      <html>
-        <body>
-          <h1>404...</h1>
-          <script dangerouslySetInnerHTML={{ __html: `
-          var password = prompt("Please enter your password:");
-          console.log({password});
-          fetch('/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({password})
-          })
-          .then(response => {
-              if (response.ok) {
-                  // 如果登录成功，则显示欢迎消息
-                  alert("Welcome!");
-              } else {
-                  // 如果登录失败，则显示错误消息
-                  alert("Incorrect username or password.");
-              }
-          })
-          .catch(error => {
-              // 如果发生错误，则显示错误消息
-              alert("An error occurred: " + error.message);
-          });
-          ` }} />
-        </body>
-      </html>
-    )
-  }
 
   return (
     <html lang="en">
