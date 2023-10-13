@@ -9,9 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@azure/openai": "1.0.0-beta.6",
     "ai": "2.2.14",
     "next": "13.4.12",
-    "openai": "4.11.0",
+    "openai": "^4.12.1",
     "react": "18.2.0",
     "react-dom": "^18.2.0"
   },
