@@ -1,4 +1,3 @@
-// ./app/api/chat/route.ts
 import OpenAI from 'openai';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { to } from 'await-to-js';
@@ -19,29 +18,35 @@ const openai = new OpenAI({
   defaultHeaders: { 'api-key': apiKey },
 });
 
-// IMPORTANT! Set the runtime to edge
 export const runtime = 'edge';
 
 export async function POST(req: Request) {
   // Extract the `prompt` from the body of the request
-  const { messages } = await req.json();
+  const { prompt } = await req.json();
 
-  // Ask OpenAI for a streaming chat completion given the prompt
-  const [error, response] = await to<any>(
-    openai.chat.completions.create({
-      model: 'gpt-4',
-      stream: true,
-      messages: messages,
-    })
-  );
+  // Request the OpenAI API for the response based on the prompt
+  const response = await openai.chat.completions.create({
+    model: 'gpt-3.5-turbo',
+    stream: true,
+    // a precise prompt is important for the AI to reply with the correct tokens
+    messages: [
+      {
+        role: 'user',
+        content: `Given the following post content, detect if it has typo or not. 
+Respond with a JSON array of typos [["typo1", "correct1], ["typo2", "correct2"], ...] or an empty [] if there's none. Only respond with an array. Post content:
+${prompt}
+        
+Output:\n`,
+      },
+    ],
+    max_tokens: 200,
+    temperature: 0, // you want absolute certainty for spell check
+    top_p: 1,
+    frequency_penalty: 1,
+    presence_penalty: 1,
+  });
 
-  if (error) {
-    console.error(error);
-    return new Response('恐怕我帮不上忙，我只是一个语言模型，不能理解或回复你的这个问题。');
-  }
-
-  // Convert the response into a friendly text-stream
   const stream = OpenAIStream(response);
-  // Respond with the stream
+
   return new StreamingTextResponse(stream);
 }

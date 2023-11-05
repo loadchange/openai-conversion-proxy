@@ -10,11 +10,14 @@
   },
   "dependencies": {
     "@azure/openai": "1.0.0-beta.6",
+    "@fluentui/react-components": "^9.37.3",
     "ai": "2.2.14",
+    "await-to-js": "^3.0.0",
     "next": "13.4.12",
     "openai": "^4.12.1",
     "react": "18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "use-debounce": "^9.0.4"
   },
   "devDependencies": {
     "@types/node": "^17.0.12",
