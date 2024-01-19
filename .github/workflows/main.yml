@@ -16,7 +16,7 @@ jobs:
       - name: Comment and close
         uses: actions/github-script@v3
         with:
-          github-token: ${{secrets.MY_GITHUB_TOKEN}}
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const issueNumber = context.issue.number;
             const commentBody = '您的问题已经处理完毕。我们将此问题关闭。如果有任何其他问题，请打开一个新的Issue。谢谢！';
