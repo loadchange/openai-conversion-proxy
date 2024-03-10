@@ -39,7 +39,12 @@ Before setting up the openai-conversion-proxy, you need to have:
    - Clone the repository to your local environment or directly in the Cloudflare Worker editor.
    ```sh
    git clone https://github.com/loadchange/openai-conversion-proxy.git
+
+	 cd openai-conversion-proxy
+	 npm install
    ```
+	 - Edit the wrangler.toml file and fill in your existing Token.
+	 - Execute the deployment command, according to the guidance prompt, authorize on the webpage.
 
 3. **Configure AI Provider Credentials**
    - Inside the cloned repository, locate and edit the configuration files to include the credentials for the AI provider(s) you want to proxy.
