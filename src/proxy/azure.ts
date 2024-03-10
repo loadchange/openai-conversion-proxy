@@ -1,0 +1,129 @@
+import { sleep } from '../utils';
+
+const MODEL_DEPLOY_NAME_LIST = ['gpt-35-turbo', 'gpt-35-turbo-1106', 'gpt-4', 'gpt-4-0613', 'gpt-4-1106-preview', 'gpt-4-vision-preview'];
+const [GPT35_TURBO, GPT35_TURBO_1106, GPT4, GPT4_0613, GPT4_1106, GPT4_VISION] = MODEL_DEPLOY_NAME_LIST;
+
+const MODELS_MAPPING = {
+	'gpt-4-0125-preview': GPT4_1106,
+	'gpt-4-turbo-preview': GPT4_1106,
+	'gpt-4-1106-preview': GPT4_1106,
+	'gpt-4-vision-preview': GPT4_VISION,
+	'gpt-4-1106-vision-preview': GPT4_VISION,
+	'gpt-4': GPT4,
+	'gpt-4-0613': GPT4_0613,
+	'gpt-4-32k': GPT4,
+	'gpt-4-32k-0613': GPT4_0613,
+	'gpt-3.5-turbo-0125': GPT35_TURBO,
+	'gpt-3.5-turbo': GPT35_TURBO,
+	'gpt-3.5-turbo-1106': GPT35_TURBO_1106,
+	'gpt-3.5-turbo-instruct': GPT35_TURBO,
+	'gpt-3.5-turbo-16k': GPT35_TURBO,
+	'gpt-3.5-turbo-0613': GPT35_TURBO,
+	'gpt-3.5-turbo-16k-0613': GPT35_TURBO,
+};
+
+const API_VERSION = '2024-02-15-preview';
+
+// The name of your Azure OpenAI Resource.
+const RESOURCE_NAME = 'min';
+
+const models = () =>
+	new Response(
+		JSON.stringify({
+			object: 'list',
+			data: Object.keys(MODELS_MAPPING).map((id) => ({
+				id,
+				object: 'model',
+				created: 1710035972,
+				owned_by: 'openai',
+				permission: [
+					{
+						id: 'modelperm-M56FXnG1AsIr3SXq8BYPvXJA',
+						object: 'model_permission',
+						created: 1709949572,
+						allow_create_engine: false,
+						allow_sampling: true,
+						allow_logprobs: true,
+						allow_search_indices: false,
+						allow_view: true,
+						allow_fine_tuning: false,
+						organization: '*',
+						group: null,
+						is_blocking: false,
+					},
+				],
+				root: id,
+				parent: null,
+			})),
+		}),
+		{ headers: { 'Content-Type': 'application/json' } }
+	);
+
+// support printer mode and add newline
+async function stream(readable: ReadableStream, writable: WritableStream) {
+	const reader = readable.getReader();
+	const writer = writable.getWriter();
+
+	const encoder = new TextEncoder();
+	const decoder = new TextDecoder();
+
+	const newline = '\n';
+	const delimiter = '\n\n';
+	const encodedNewline = encoder.encode(newline);
+
+	let buffer = '';
+	while (true) {
+		let { value, done } = await reader.read();
+		if (done) {
+			break;
+		}
+		buffer += decoder.decode(value, { stream: true });
+		let lines = buffer.split(delimiter);
+
+		for (let i = 0; i < lines.length - 1; i++) {
+			await writer.write(encoder.encode(lines[i] + delimiter));
+			await sleep(20);
+		}
+
+		buffer = lines[lines.length - 1];
+	}
+
+	if (buffer) {
+		await writer.write(encoder.encode(buffer));
+	}
+	await writer.write(encodedNewline);
+	await writer.close();
+}
+
+const proxy: IProxy = async (request: Request, token: string, body: any, url: URL) => {
+	// Remove the leading /v1/ from url.pathname
+	const action = url.pathname.replace(/^\/+v1\/+/, '');
+
+	if (action === 'models') return models();
+
+	const payload = {
+		method: request.method,
+		headers: {
+			'Content-Type': 'application/json',
+			'api-key': token,
+		},
+		body: JSON.stringify(body ?? {}),
+	};
+
+	if (!['chat/completions', 'images/generations', 'completions'].includes(action)) return new Response('404 Not Found', { status: 404 });
+
+	const deployName = MODELS_MAPPING[body?.model as OPEN_AI_MODELS] ?? GPT35_TURBO_1106;
+
+	const fetchAPI = `https://${RESOURCE_NAME}.openai.azure.com/openai/deployments/${deployName}/${action}?api-version=${API_VERSION}`;
+	let response = await fetch(fetchAPI, payload);
+	response = new Response(response.body, response);
+	response.headers.set('Access-Control-Allow-Origin', '*');
+
+	if (body?.stream != true) return response;
+
+	let { readable, writable } = new TransformStream();
+	stream(response.body as ReadableStream, writable);
+	return new Response(readable, response);
+};
+
+export default proxy;

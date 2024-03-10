@@ -1,4 +1,4 @@
-name = "test001"
+name = "openai-conversion-proxy"
 main = "src/index.ts"
 compatibility_date = "2024-03-04"
 

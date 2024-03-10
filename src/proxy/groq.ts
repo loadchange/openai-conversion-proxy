@@ -20,7 +20,7 @@
  * Documentation: https://console.groq.com/docs/models
  */
 
-const MODELS = ['llama2-70b-4096', 'mixtral-8x7b-32768', 'Gemma-7b-it'];
+const MODELS = ['llama2-70b-4096', 'mixtral-8x7b-32768', 'gemma-7b-it'];
 const [LLaMA270b, Mixtral8x7b, Gemma7bit] = MODELS;
 
 const MODELS_MAPPING = {
@@ -42,7 +42,7 @@ const MODELS_MAPPING = {
 	'gpt-3.5-turbo-16k-0613': LLaMA270b,
 };
 
-async function proxy(request: Request, token: string, body: any, url: URL) {
+const proxy: IProxy = (request: Request, token: string, body: any, url: URL) => {
 	const payload = {
 		method: request.method,
 		headers: {
@@ -52,12 +52,10 @@ async function proxy(request: Request, token: string, body: any, url: URL) {
 		body: '{}',
 	};
 	if (body) {
-		if (!body.model) {
-			body.model = LLaMA270b;
-		} else if (!MODELS.includes(body.model)) {
-			body.model = MODELS_MAPPING[body.model as OPEN_AI_MODELS] ?? Gemma7bit;
-		}
+		body.model = MODELS_MAPPING[body?.model as OPEN_AI_MODELS] ?? Gemma7bit;
 		payload.body = JSON.stringify(body);
 	}
-	return await fetch(`https://api.groq.com/openai${url.pathname}`, payload);
-}
+	return fetch(`https://api.groq.com/openai/${url.pathname.replace(/^\/+/, '')}`, payload);
+};
+
+export default proxy;
