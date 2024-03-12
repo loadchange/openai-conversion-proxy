@@ -1,26 +1,9 @@
-import { sleep } from '../utils';
+import { sleep, generativeModelMappings } from '../utils';
 
-const MODEL_DEPLOY_NAME_LIST = ['gpt-35-turbo', 'gpt-35-turbo-1106', 'gpt-4', 'gpt-4-0613', 'gpt-4-1106-preview', 'gpt-4-vision-preview'];
-const [GPT35_TURBO, GPT35_TURBO_1106, GPT4, GPT4_0613, GPT4_1106, GPT4_VISION] = MODEL_DEPLOY_NAME_LIST;
+const MODEL_DEPLOY_NAME_LIST = ['gpt-35-turbo', 'gpt-4-turbo', 'gpt-4-vision-preview'];
+const [GPT35_TURBO, GPT4_TURBO, GPT4_VISION] = MODEL_DEPLOY_NAME_LIST;
 
-const MODELS_MAPPING = {
-	'gpt-4-0125-preview': GPT4_1106,
-	'gpt-4-turbo-preview': GPT4_1106,
-	'gpt-4-1106-preview': GPT4_1106,
-	'gpt-4-vision-preview': GPT4_VISION,
-	'gpt-4-1106-vision-preview': GPT4_VISION,
-	'gpt-4': GPT4,
-	'gpt-4-0613': GPT4_0613,
-	'gpt-4-32k': GPT4,
-	'gpt-4-32k-0613': GPT4_0613,
-	'gpt-3.5-turbo-0125': GPT35_TURBO,
-	'gpt-3.5-turbo': GPT35_TURBO,
-	'gpt-3.5-turbo-1106': GPT35_TURBO_1106,
-	'gpt-3.5-turbo-instruct': GPT35_TURBO,
-	'gpt-3.5-turbo-16k': GPT35_TURBO,
-	'gpt-3.5-turbo-0613': GPT35_TURBO,
-	'gpt-3.5-turbo-16k-0613': GPT35_TURBO,
-};
+const MODELS_MAPPING = generativeModelMappings(GPT35_TURBO, GPT4_TURBO, GPT4_VISION);
 
 const API_VERSION = '2024-02-15-preview';
 
