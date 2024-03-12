@@ -16,4 +16,10 @@ type OPEN_AI_MODELS =
 	| 'gpt-3.5-turbo-0613'
 	| 'gpt-3.5-turbo-16k-0613';
 
-type IProxy = (request: Request, token: string, body: any, url: URL) => Promise<Response>;
+type IProxy = (request: Request, token: string, body: any, url: URL, env: Env) => Promise<Response>;
+
+interface Env {
+	GROQ_CLOUD_TOKEN: string;
+	AZURE_API_KEY: string;
+	AZURE_GATEWAY_URL?: string;
+}

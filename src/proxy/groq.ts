@@ -27,7 +27,7 @@ const [LLaMA270b, Mixtral8x7b, Gemma7bit] = MODELS;
 
 const MODELS_MAPPING = generativeModelMappings(LLaMA270b, Mixtral8x7b, Gemma7bit);
 
-const proxy: IProxy = (request: Request, token: string, body: any, url: URL) => {
+const proxy: IProxy = (request: Request, token: string, body: any, url: URL, env: Env) => {
 	const payload = {
 		method: request.method,
 		headers: {

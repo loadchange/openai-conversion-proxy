@@ -78,7 +78,7 @@ async function stream(readable: ReadableStream, writable: WritableStream) {
 	await writer.close();
 }
 
-const proxy: IProxy = async (request: Request, token: string, body: any, url: URL) => {
+const proxy: IProxy = async (request: Request, token: string, body: any, url: URL, env: Env) => {
 	// Remove the leading /v1/ from url.pathname
 	const action = url.pathname.replace(/^\/+v1\/+/, '');
 
@@ -95,9 +95,11 @@ const proxy: IProxy = async (request: Request, token: string, body: any, url: UR
 
 	if (!['chat/completions', 'images/generations', 'completions'].includes(action)) return new Response('404 Not Found', { status: 404 });
 
-	const deployName = MODELS_MAPPING[body?.model as OPEN_AI_MODELS] ?? GPT35_TURBO_1106;
+	const deployName = MODELS_MAPPING[body?.model as OPEN_AI_MODELS] ?? GPT35_TURBO;
 
-	const fetchAPI = `https://${RESOURCE_NAME}.openai.azure.com/openai/deployments/${deployName}/${action}?api-version=${API_VERSION}`;
+	const fetchAPI = env.AZURE_GATEWAY_URL
+		? `${env.AZURE_GATEWAY_URL}${RESOURCE_NAME}/${deployName}/${action}?api-version=${API_VERSION}`
+		: `https://${RESOURCE_NAME}.openai.azure.com/openai/deployments/${deployName}/${action}?api-version=${API_VERSION}`;
 	let response = await fetch(fetchAPI, payload);
 	response = new Response(response.body, response);
 	response.headers.set('Access-Control-Allow-Origin', '*');
