@@ -95,7 +95,7 @@ const proxy: IProxy = async (request: Request, token: string, body: any, url: UR
 		body: JSON.stringify(body ?? {}),
 	};
 
-	if (!['chat/completions', 'images/generations', 'completions'].includes(action)) return new Response('404 Not Found', { status: 404 });
+	if (!['chat/completions', 'images/generations', 'completions', 'embeddings'].includes(action)) return new Response('404 Not Found', { status: 404 });
 
 	const deployName = MODELS_MAPPING[body?.model as OPEN_AI_MODELS] ?? GPT35_TURBO;
 
