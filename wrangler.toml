@@ -5,4 +5,7 @@ compatibility_date = "2024-03-04"
 [vars]
 GROQ_CLOUD_TOKEN = ""
 AZURE_API_KEY = ""
+OPENAI_API_KEY = ""
 AZURE_GATEWAY_URL = ""
+OPENAI_GATEWAY_URL = ""
+

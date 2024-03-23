@@ -1,10 +1,11 @@
 import { options } from './constant';
 import azure from './proxy/azure';
 import groq from './proxy/groq';
+import openAi from './proxy/openai';
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		const TOKEN_MAPPER = { [env.GROQ_CLOUD_TOKEN]: groq, [env.AZURE_API_KEY]: azure };
+		const TOKEN_MAPPER = { [env.GROQ_CLOUD_TOKEN]: groq, [env.AZURE_API_KEY]: azure, [env.OPENAI_API_KEY]: openAi };
 		const url = new URL(request.url);
 		if (request.method === 'OPTIONS') return options;
 
