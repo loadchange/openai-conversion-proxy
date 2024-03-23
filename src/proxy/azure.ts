@@ -3,7 +3,9 @@ import { sleep, generativeModelMappings } from '../utils';
 const MODEL_DEPLOY_NAME_LIST = ['gpt-35-turbo', 'gpt-4-turbo', 'gpt-4-vision-preview'];
 const [GPT35_TURBO, GPT4_TURBO, GPT4_VISION] = MODEL_DEPLOY_NAME_LIST;
 
-const MODELS_MAPPING = generativeModelMappings(GPT35_TURBO, GPT4_TURBO, GPT4_VISION);
+const MODELS_MAPPING = generativeModelMappings(GPT35_TURBO, GPT4_TURBO, GPT4_VISION, {
+	'text-embedding-ada-002': 'text-embedding-ada-002-2',
+});
 
 const API_VERSION = '2024-02-15-preview';
 
