@@ -2,8 +2,6 @@
 
 A versatile Cloudflare Workers-based proxy service designed to standardize AI APIs from multiple vendors, including OpenAI itself, into a single unified interface. Our service enhances integration into the existing OpenAI ecosystem while enabling cost-effective AI solutions through usage monitoring, response caching, and the ability to switch between AI providers with a simple token change.
 
-*Please note that openai-conversion-proxy is an independent project and is not officially affiliated with OpenAI.*
-
 ## Features
 
 - Proxy and standardize APIs from multiple AI providers, as well as OpenAI's own API, to a unified OpenAI-style API format.
@@ -48,6 +46,20 @@ Before setting up the openai-conversion-proxy, you need to have:
    ```
 
    - Edit the wrangler.toml file and fill in your existing Token.
+      * `GROQ_CLOUD_TOKEN` - [groq keys](https://console.groq.com/keys) 
+         * Features: Fast response time, free of charge
+         * Drawbacks: There are invocation limits, for details refer to the documentation, and there are fewer models.
+         * Mapping relationship:
+            + LLaMA2-70b simulates GPT-3.5 Turbo
+            + Mixtral-8x7b simulates GPT-4 Turbo
+            + Gemma-7b-it simulates GPT-4 0125 Turbo
+      
+      * `AZURE_API_KEY` Key for the West US region
+      * `AZURE_USE_API_KEY` Key for the East US region
+      * `OPENAI_API_KEY` Key for OpenAI
+      * `AZURE_GATEWAY_URL` Optional, Cloudflare proxy gateway URL for visualizing API usage
+      * `OPENAI_GATEWAY_URL` Optional, Cloudflare proxy gateway URL for visualizing API usage and budget control
+
    - Execute the deployment command, according to the guidance prompt, authorize on the webpage.
 3. **Configure AI Provider Credentials**
 
@@ -56,6 +68,11 @@ Before setting up the openai-conversion-proxy, you need to have:
 
    - Upload the script to your Cloudflare Worker.
    - Adjust routes in the Cloudflare dashboard to match the API requests that should be proxied.
+
+   ```sh
+   npm run deploy
+   ```
+
 5. **Test the Proxy**
 
    - Ensure that the proxy is correctly intercepting and transforming requests/responses.

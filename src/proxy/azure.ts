@@ -1,48 +1,18 @@
-import { sleep, generativeModelMappings } from '../utils';
+import { sleep, models, generativeModelMappings } from '../utils';
 
 const MODEL_DEPLOY_NAME_LIST = ['gpt-35-turbo', 'gpt-4-turbo', 'gpt-4-vision-preview'];
 const [GPT35_TURBO, GPT4_TURBO, GPT4_VISION] = MODEL_DEPLOY_NAME_LIST;
 
-const MODELS_MAPPING = generativeModelMappings(GPT35_TURBO, GPT4_TURBO, GPT4_VISION, {
+const MODELS_MAPPING = generativeModelMappings(GPT35_TURBO, GPT4_TURBO, {
+	'gpt-4-vision-preview': GPT4_VISION,
+	'gpt-4-1106-vision-preview': GPT4_VISION,
 	'text-embedding-ada-002': 'text-embedding-ada-002-2',
+	'dall-e-3': 'Dalle3',
+	'text-embedding-3-large': 'text-embedding-3-large',
+	'text-embedding-3-small': 'text-embedding-3-small',
 });
 
 const API_VERSION = '2024-02-15-preview';
-
-// The name of your Azure OpenAI Resource.
-const RESOURCE_NAME = 'min';
-
-const models = () =>
-	new Response(
-		JSON.stringify({
-			object: 'list',
-			data: Object.keys(MODELS_MAPPING).map((id) => ({
-				id,
-				object: 'model',
-				created: 1710035972,
-				owned_by: 'openai',
-				permission: [
-					{
-						id: 'modelperm-M56FXnG1AsIr3SXq8BYPvXJA',
-						object: 'model_permission',
-						created: 1709949572,
-						allow_create_engine: false,
-						allow_sampling: true,
-						allow_logprobs: true,
-						allow_search_indices: false,
-						allow_view: true,
-						allow_fine_tuning: false,
-						organization: '*',
-						group: null,
-						is_blocking: false,
-					},
-				],
-				root: id,
-				parent: null,
-			})),
-		}),
-		{ headers: { 'Content-Type': 'application/json' } }
-	);
 
 // support printer mode and add newline
 async function stream(readable: ReadableStream, writable: WritableStream) {
@@ -80,28 +50,47 @@ async function stream(readable: ReadableStream, writable: WritableStream) {
 	await writer.close();
 }
 
-const proxy: IProxy = async (request: Request, token: string, body: any, url: URL, env: Env) => {
+/**
+ * Due to varying quota limits across different regions when deploying models on Microsoft Azure,
+ * it is necessary to perform region mapping. Most models are located in West US,
+ * text-embedding-3-large and text-embedding-3-small, are in the EASTUS region.
+ * @param model
+ * @returns
+ */
+const getResourceNameAndToken = (model: string, env: Env) => {
+	if (['dall-e-3', 'text-embedding-3-small', 'text-embedding-3-large'].includes(model)) {
+		return { resourceName: 'min-east-us', token: env.AZURE_USE_API_KEY };
+	}
+	return { resourceName: 'min', token: env.AZURE_API_KEY };
+};
+
+const proxy: IProxy = async (request: Request, _: string, body: any, url: URL, env: Env) => {
 	// Remove the leading /v1/ from url.pathname
 	const action = url.pathname.replace(/^\/+v1\/+/, '');
 
-	if (action === 'models') return models();
+	if (action === 'models') return models(MODELS_MAPPING);
 
 	const payload = {
 		method: request.method,
 		headers: {
 			'Content-Type': 'application/json',
-			'api-key': token,
+			'api-key': '',
 		},
 		body: JSON.stringify(body ?? {}),
 	};
 
-	if (!['chat/completions', 'images/generations', 'completions', 'embeddings'].includes(action)) return new Response('404 Not Found', { status: 404 });
+	if (!['chat/completions', 'images/generations', 'completions', 'embeddings'].includes(action))
+		return new Response('404 Not Found', { status: 404 });
 
 	const deployName = MODELS_MAPPING[body?.model as OPEN_AI_MODELS] ?? GPT35_TURBO;
 
+	const { resourceName, token } = getResourceNameAndToken(body?.model as string, env);
+	payload.headers['api-key'] = token;
+
 	const fetchAPI = env.AZURE_GATEWAY_URL
-		? `${env.AZURE_GATEWAY_URL}${RESOURCE_NAME}/${deployName}/${action}?api-version=${API_VERSION}`
-		: `https://${RESOURCE_NAME}.openai.azure.com/openai/deployments/${deployName}/${action}?api-version=${API_VERSION}`;
+		? `${env.AZURE_GATEWAY_URL}${resourceName}/${deployName}/${action}?api-version=${API_VERSION}`
+		: `https://${resourceName}.openai.azure.com/openai/deployments/${deployName}/${action}?api-version=${API_VERSION}`;
+
 	let response = await fetch(fetchAPI, payload);
 	response = new Response(response.body, response);
 	response.headers.set('Access-Control-Allow-Origin', '*');
