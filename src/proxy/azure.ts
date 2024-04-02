@@ -10,6 +10,8 @@ const MODELS_MAPPING = generativeModelMappings(GPT35_TURBO, GPT4_TURBO, {
 	'dall-e-3': 'Dalle3',
 	'text-embedding-3-large': 'text-embedding-3-large',
 	'text-embedding-3-small': 'text-embedding-3-small',
+	'gpt-3.5-turbo-0125': 'gpt-35-turbo-0125', // north-central-us region
+	'gpt-4-0125-preview': 'gpt-4-turbo-0125', // north-central-us region
 });
 
 const API_VERSION = '2024-02-15-preview';
@@ -60,6 +62,9 @@ async function stream(readable: ReadableStream, writable: WritableStream) {
 const getResourceNameAndToken = (model: string, env: Env) => {
 	if (['dall-e-3', 'text-embedding-3-small', 'text-embedding-3-large'].includes(model)) {
 		return { resourceName: 'min-east-us', token: env.AZURE_USE_API_KEY };
+	}
+	if (['gpt-3.5-turbo-0125', 'gpt-4-0125-preview'].includes(model)) {
+		return { resourceName: 'min-north-central-us', token: env.AZURE_USNC_API_KEY };
 	}
 	return { resourceName: 'min', token: env.AZURE_API_KEY };
 };

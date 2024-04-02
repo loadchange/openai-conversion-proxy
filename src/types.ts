@@ -20,8 +20,9 @@ type IProxy = (request: Request, token: string, body: any, url: URL, env: Env) =
 
 interface Env {
 	GROQ_CLOUD_TOKEN: string;
-	AZURE_API_KEY: string;
-	AZURE_USE_API_KEY: string;
+	AZURE_API_KEY: string; // West US
+	AZURE_USE_API_KEY: string; // East US
+	AZURE_USNC_API_KEY: string; // North Central US
 	OPENAI_API_KEY: string;
 	AZURE_GATEWAY_URL?: string;
 	OPENAI_GATEWAY_URL?: string;
