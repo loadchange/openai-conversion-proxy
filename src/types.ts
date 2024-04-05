@@ -18,11 +18,39 @@ type OPEN_AI_MODELS =
 
 type IProxy = (request: Request, token: string, body: any, url: URL, env: Env) => Promise<Response>;
 
+interface AzureKey {
+	resourceName: string;
+	token: string;
+	default?: boolean;
+	models?: string[];
+}
+interface AzureDeployName {
+	deployName: string;
+	modelName: string;
+	/**
+	 * Override the default values for all gpt3.5 models
+	 */
+	gpt35Default?: boolean;
+	/**
+	 * Override the default values for all gpt4 models
+	 */
+	gpt4Default?: boolean;
+}
+
 interface Env {
+	/**
+	 * Azure Open AI Custom Key:
+	 * The configuration here is not an actual Azure API Key, but a custom key you define.
+	 * When the service receives this key, the program will understand that Azure services need to be used.
+	 * Since Azure is region-specific, you may need to configure multiple real keys.
+	 * However, the key here is used solely for service routing identification and can also ensure the security of the key.
+	 * You can change it at any time as you wish.
+	 */
+	AZURE_OPENAI_CUSTOM_KEY: string;
+	AZURE_API_KEYS: AzureKey[];
+	AZURE_DEPLOY_NAME: AzureDeployName[];
+	AZURE_API_VERSION?: string;
 	GROQ_CLOUD_TOKEN: string;
-	AZURE_API_KEY: string; // West US
-	AZURE_USE_API_KEY: string; // East US
-	AZURE_USNC_API_KEY: string; // North Central US
 	OPENAI_API_KEY: string;
 	AZURE_GATEWAY_URL?: string;
 	OPENAI_GATEWAY_URL?: string;

@@ -30,7 +30,12 @@ const [LLaMA270b, Mixtral8x7b, Gemma7bit] = MODELS;
  * Mixtral8x7b => GPT-4 Turbo
  * Gemma7bit => GPT-4 0125 Turbo
  */
-const MODELS_MAPPING = generativeModelMappings(LLaMA270b, Mixtral8x7b, { 'gpt-4-0125-preview': Gemma7bit });
+const MODELS_MAPPING = generativeModelMappings(LLaMA270b, Mixtral8x7b, {
+	'gpt-4-0125-preview': Gemma7bit,
+	'llama2-70b-4096': LLaMA270b,
+	'mixtral-8x7b-32768': Mixtral8x7b,
+	'gemma-7b-it': Gemma7bit,
+});
 
 const proxy: IProxy = (request: Request, token: string, body: any, url: URL, env: Env) => {
 	const action = url.pathname.replace(/^\/+v1\/+/, '');

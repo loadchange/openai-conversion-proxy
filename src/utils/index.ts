@@ -7,23 +7,26 @@ export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve
  * @param otherMapping Any other mappings to include
  * @returns A mapping of the generative model names to the actual model names
  */
-export const generativeModelMappings = (GPT35_TURBO: string, GPT4_TURBO: string, otherMapping?: any) => ({
-	'gpt-4-0125-preview': GPT4_TURBO,
-	'gpt-4-turbo-preview': GPT4_TURBO,
-	'gpt-4-1106-preview': GPT4_TURBO,
-	'gpt-4': GPT4_TURBO,
-	'gpt-4-0613': GPT4_TURBO,
-	'gpt-4-32k': GPT4_TURBO,
-	'gpt-4-32k-0613': GPT4_TURBO,
-	'gpt-3.5-turbo-0125': GPT35_TURBO,
-	'gpt-3.5-turbo': GPT35_TURBO,
-	'gpt-3.5-turbo-1106': GPT35_TURBO,
-	'gpt-3.5-turbo-instruct': GPT35_TURBO,
-	'gpt-3.5-turbo-16k': GPT35_TURBO,
-	'gpt-3.5-turbo-0613': GPT35_TURBO,
-	'gpt-3.5-turbo-16k-0613': GPT35_TURBO,
-	...otherMapping,
-});
+export const generativeModelMappings = (GPT35_TURBO: string, GPT4_TURBO?: string, otherMapping?: any) => {
+	if (!GPT4_TURBO) GPT4_TURBO = GPT35_TURBO;
+	return {
+		'gpt-4-0125-preview': GPT4_TURBO,
+		'gpt-4-turbo-preview': GPT4_TURBO,
+		'gpt-4-1106-preview': GPT4_TURBO,
+		'gpt-4': GPT4_TURBO,
+		'gpt-4-0613': GPT4_TURBO,
+		'gpt-4-32k': GPT4_TURBO,
+		'gpt-4-32k-0613': GPT4_TURBO,
+		'gpt-3.5-turbo-0125': GPT35_TURBO,
+		'gpt-3.5-turbo': GPT35_TURBO,
+		'gpt-3.5-turbo-1106': GPT35_TURBO,
+		'gpt-3.5-turbo-instruct': GPT35_TURBO,
+		'gpt-3.5-turbo-16k': GPT35_TURBO,
+		'gpt-3.5-turbo-0613': GPT35_TURBO,
+		'gpt-3.5-turbo-16k-0613': GPT35_TURBO,
+		...otherMapping,
+	};
+};
 
 /**
  * Common query model list
@@ -61,3 +64,10 @@ export const models = async (modelsMapping: any) =>
 		}),
 		{ headers: { 'Content-Type': 'application/json' } }
 	);
+
+/**
+ * Array nonempty
+ * @param arr
+ * @returns
+ */
+export const isNotEmpty = <T>(arr: any): arr is T[] => Array.isArray(arr) && arr.length > 0;

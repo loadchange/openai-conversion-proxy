@@ -1,20 +1,4 @@
-import { sleep, models, generativeModelMappings } from '../utils';
-
-const MODEL_DEPLOY_NAME_LIST = ['gpt-35-turbo', 'gpt-4-turbo', 'gpt-4-vision-preview'];
-const [GPT35_TURBO, GPT4_TURBO, GPT4_VISION] = MODEL_DEPLOY_NAME_LIST;
-
-const MODELS_MAPPING = generativeModelMappings(GPT35_TURBO, GPT4_TURBO, {
-	'gpt-4-vision-preview': GPT4_VISION,
-	'gpt-4-1106-vision-preview': GPT4_VISION,
-	'text-embedding-ada-002': 'text-embedding-ada-002-2',
-	'dall-e-3': 'Dalle3',
-	'text-embedding-3-large': 'text-embedding-3-large',
-	'text-embedding-3-small': 'text-embedding-3-small',
-	'gpt-3.5-turbo-0125': 'gpt-35-turbo-0125', // north-central-us region
-	'gpt-4-0125-preview': 'gpt-4-turbo-0125', // north-central-us region
-});
-
-const API_VERSION = '2024-02-15-preview';
+import { sleep, models, generativeModelMappings, isNotEmpty } from '../utils';
 
 // support printer mode and add newline
 async function stream(readable: ReadableStream, writable: WritableStream) {
@@ -60,20 +44,36 @@ async function stream(readable: ReadableStream, writable: WritableStream) {
  * @returns
  */
 const getResourceNameAndToken = (model: string, env: Env) => {
-	if (['dall-e-3', 'text-embedding-3-small', 'text-embedding-3-large'].includes(model)) {
-		return { resourceName: 'min-east-us', token: env.AZURE_USE_API_KEY };
+	const resourceInfo = Object.create(null);
+	if (!isNotEmpty(env.AZURE_API_KEYS)) return resourceInfo;
+	for (let i = 0; i < env.AZURE_API_KEYS.length; i++) {
+		const item = env.AZURE_API_KEYS[i];
+		if (isNotEmpty<string>(item.models) && item.models.includes(model)) return item;
+		if (item.default) {
+			resourceInfo.resourceName = item.resourceName;
+			resourceInfo.token = item.token;
+		}
 	}
-	if (['gpt-3.5-turbo-0125', 'gpt-4-0125-preview'].includes(model)) {
-		return { resourceName: 'min-north-central-us', token: env.AZURE_USNC_API_KEY };
-	}
-	return { resourceName: 'min', token: env.AZURE_API_KEY };
+	return resourceInfo;
 };
 
 const proxy: IProxy = async (request: Request, _: string, body: any, url: URL, env: Env) => {
 	// Remove the leading /v1/ from url.pathname
 	const action = url.pathname.replace(/^\/+v1\/+/, '');
 
-	if (action === 'models') return models(MODELS_MAPPING);
+	let models_maping = Object.create(null);
+	let [gpt35, gpt4] = ['', ''];
+	if (isNotEmpty(env.AZURE_DEPLOY_NAME)) {
+		env.AZURE_DEPLOY_NAME.forEach((item) => {
+			if (item.gpt35Default) gpt35 = item.deployName;
+			if (item.gpt4Default) gpt4 = item.deployName;
+			models_maping[item.modelName] = item.deployName;
+		});
+	}
+	if (!gpt35) return new Response('404 Not Found', { status: 404 });
+	models_maping = generativeModelMappings(gpt35, gpt4, models_maping);
+
+	if (action === 'models') return models(models_maping);
 
 	const payload = {
 		method: request.method,
@@ -84,16 +84,22 @@ const proxy: IProxy = async (request: Request, _: string, body: any, url: URL, e
 		body: JSON.stringify(body ?? {}),
 	};
 
-	if (!['chat/completions', 'images/generations', 'completions', 'embeddings'].includes(action))
+	if (!['chat/completions', 'images/generations', 'completions', 'embeddings'].includes(action)) {
 		return new Response('404 Not Found', { status: 404 });
+	}
 
-	const deployName = MODELS_MAPPING[body?.model as OPEN_AI_MODELS] ?? GPT35_TURBO;
+	const deployName = models_maping[body?.model as OPEN_AI_MODELS] ?? gpt35;
 
 	const { resourceName, token } = getResourceNameAndToken(body?.model as string, env);
+	if (!resourceName || !token) {
+		return new Response('401 Unauthorized', { status: 401 });
+	}
+
 	payload.headers['api-key'] = token;
 
+	const API_VERSION = env.AZURE_API_VERSION ?? '2024-02-15-preview';
 	const fetchAPI = env.AZURE_GATEWAY_URL
-		? `${env.AZURE_GATEWAY_URL}${resourceName}/${deployName}/${action}?api-version=${API_VERSION}`
+		? `${env.AZURE_GATEWAY_URL}/${resourceName}/${deployName}/${action}?api-version=${API_VERSION}`
 		: `https://${resourceName}.openai.azure.com/openai/deployments/${deployName}/${action}?api-version=${API_VERSION}`;
 
 	let response = await fetch(fetchAPI, payload);
