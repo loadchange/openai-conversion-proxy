@@ -3,9 +3,35 @@ main = "src/index.ts"
 compatibility_date = "2024-03-04"
 
 [vars]
-GROQ_CLOUD_TOKEN = ""
-AZURE_API_KEY = ""
-OPENAI_API_KEY = ""
-AZURE_USE_API_KEY = ""
-AZURE_GATEWAY_URL = ""
-OPENAI_GATEWAY_URL = ""
+AZURE_API_VERSION = "2024-02-15-preview"
+AZURE_OPENAI_CUSTOM_KEY = "sk-xxxxxxx"
+AZURE_API_KEYS = [
+    { "resourceName" = "us-w", "token" = "xxxxxx", "default" = true },
+    { "resourceName" = "us-e", "token" = "xxxxxx", "models" = [
+        "dall-e-3",
+        "text-embedding-3-small",
+        "text-embedding-3-large",
+    ] },
+    { "resourceName" = "us-nc", "token" = "xxxxxx", "models" = [
+        "gpt-3.5-turbo-0125",
+        "gpt-4-0125-preview",
+    ] },
+]
+AZURE_DEPLOY_NAME = [
+    { "deployName" = "gpt-35-turbo", "modelName" = "gpt-3.5-turbo", "gpt35Default" = true },
+    { "deployName" = "gpt-4-turbo", "modelName" = "gpt-4-turbo-preview", "gpt4Default" = true },
+    { "deployName" = "gpt-4-vision-preview", "modelName" = "gpt-4-vision-preview" },
+    { "deployName" = "gpt-4-vision-preview", "modelName" = "gpt-4-1106-vision-preview" },
+    { "deployName" = "text-embedding-ada-002-2", "modelName" = "text-embedding-ada-002" },
+    { "deployName" = "Dalle3", "modelName" = "dall-e-3" },
+    { "deployName" = "text-embedding-3-large", "modelName" = "text-embedding-3-large" },
+    { "deployName" = "text-embedding-3-small", "modelName" = "text-embedding-3-small" },
+    { "deployName" = "gpt-35-turbo-0125", "modelName" = "gpt-3.5-turbo-0125" },
+    { "deployName" = "gpt-4-turbo-0125", "modelName" = "gpt-4-0125-preview" },
+]
+AZURE_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/xxx/xxx/azure-openai"
+
+OPENAI_API_KEY = "sk-xxx"
+OPENAI_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/xxx/xxx/openai"
+
+GROQ_CLOUD_TOKEN = "gsk_xxx"

@@ -1,112 +1,53 @@
-# OPENAI-CONVERSION-PROXY
+# OpenAI Conversion Proxy
 
-A versatile Cloudflare Workers-based proxy service designed to standardize AI APIs from multiple vendors, including OpenAI itself, into a single unified interface. Our service enhances integration into the existing OpenAI ecosystem while enabling cost-effective AI solutions through usage monitoring, response caching, and the ability to switch between AI providers with a simple token change.
-
-## Features
-
-- Proxy and standardize APIs from multiple AI providers, as well as OpenAI's own API, to a unified OpenAI-style API format.
-- Seamless integration for software expecting OpenAI API formats with the added ability to switch AI providers conveniently.
-- Integration with Cloudflare AI Gateway for monitoring usage and caching responses, optimizing costs without sacrificing performance.
-- Built on Cloudflare Workers for top-tier reliability and scalability.
-
-## Background
-
-The enhanced openai-conversion-proxy addresses the evolving need for a more adaptable and cost-efficient AI API integration. As AI service offerings diversify, the ability to switch between providers, including OpenAI, based on cost, performance, or feature availability becomes essential. This project simplifies these transitions without requiring changes to existing software setups.
-
-## How It Works
-
-The proxy service intercepts AI API requests and reroutes them to the specified AI provider based on the provided token. It performs bidirectional transformation of the requests and responses to ensure compatibility and leverages Cloudflare AI Gateway to monitor usage and cache responses, thus optimizing costs and improving performance.
+Welcome to the OpenAI Conversion Proxy project! This innovative edge computing script is designed to run on Cloudflare Workers, taking full advantage of Cloudflare's generous policy that allows up to 100,000 free invocations per day. This setup makes it perfectly suitable for personal, research, and learning purposes, offering a cost-effective way to leverage AI services from Azure, OpenAI, and Groq Cloud.
 
 ## Getting Started
 
+To deploy your own instance of the OpenAI Conversion Proxy, follow these simple steps:
 
-### Prerequisites
-
-Before setting up the openai-conversion-proxy, you need to have:
-
-- A Cloudflare account with access to Workers.
-- API credentials from your chosen AI service provider(s).
-- Basic knowledge of JavaScript and Cloudflare Workers environment.
-
-### Installation Steps
-
-1. **Setup Cloudflare Worker**
-
-   - Log in to your Cloudflare account and navigate to the Workers section.
-   - Create a new Worker and name it appropriately.
-2. **Clone the openai-conversion-proxy Repository**
-
-   - Clone the repository to your local environment or directly in the Cloudflare Worker editor.
-
-   ```sh
+1. **Clone the Repository**
+   Start by cloning the repository to your local machine using the following command:
+   ```
    git clone https://github.com/loadchange/openai-conversion-proxy.git
+   ```
 
-   cd openai-conversion-proxy
+2. **Install Dependencies**
+   Navigate into the cloned repository directory and install the necessary dependencies by running:
+   ```
    npm install
    ```
 
-   - Edit the wrangler.toml file and fill in your existing Token.
-      * `GROQ_CLOUD_TOKEN` - [groq keys](https://console.groq.com/keys) 
-         * Features: Fast response time, free of charge
-         * Drawbacks: There are invocation limits, for details refer to the documentation, and there are fewer models.
-         * Mapping relationship:
-            + LLaMA2-70b simulates GPT-3.5 Turbo
-            + Mixtral-8x7b simulates GPT-4 Turbo
-            + Gemma-7b-it simulates GPT-4 0125 Turbo
-      
-      * `AZURE_API_KEY` Key for the West US region
-      * `AZURE_USE_API_KEY` Key for the East US region
-      * `OPENAI_API_KEY` Key for OpenAI
-      * `AZURE_GATEWAY_URL` Optional, Cloudflare proxy gateway URL for visualizing API usage
-      * `OPENAI_GATEWAY_URL` Optional, Cloudflare proxy gateway URL for visualizing API usage and budget control
-
-   - Execute the deployment command, according to the guidance prompt, authorize on the webpage.
-3. **Configure AI Provider Credentials**
-
-   - Inside the cloned repository, locate and edit the configuration files to include the credentials for the AI provider(s) you want to proxy.
-4. **Deploy to Cloudflare Workers**
-
-   - Upload the script to your Cloudflare Worker.
-   - Adjust routes in the Cloudflare dashboard to match the API requests that should be proxied.
-
-   ```sh
+3. **Deploy to Cloudflare Workers**
+   Once the dependencies are installed, you can deploy your proxy to Cloudflare Workers by executing:
+   ```
    npm run deploy
    ```
+   This command will automatically handle the deployment process, making your OpenAI proxy available online.
 
-5. **Test the Proxy**
+## Configuration Guide
 
-   - Ensure that the proxy is correctly intercepting and transforming requests/responses.
-   - Use an OpenAI-compatible client to make a request and verify that the service behaves as expected.
-
+Before deploying, you'll need to configure your project to work with the respective AI services. We've prepared a detailed [Project Configuration Guide](https://github.com/loadchange/openai-conversion-proxy/pull/7) to help you set up your project correctly. This guide covers everything from Azure API versions to Cloudflare Gateway URLs, ensuring you have all the information needed to customize the proxy according to your needs.
 
 ## Usage
 
-With the updated proxy, change the API endpoint URL in your OpenAI-compatible client to your Cloudflare Worker's URL and switch between different AI providers by updating the token. The proxy, along with Cloudflare AI Gateway, will manage the rest.
+Once deployed, your OpenAI Conversion Proxy will act as a middleman between your applications and the AI services, allowing you to:
+- Leverage different AI models from Azure, OpenAI, and Groq Cloud.
+- Take advantage of Cloudflare's caching and usage monitoring to optimize costs.
+- Easily switch between AI service providers without major changes to your base code.
 
-## Limitations
-
-- Feature compatibility will vary based on the chosen AI provider's capabilities.
-- OpenAI's advanced features may not be fully supported by other AI providers.
-- Performance and latency are subject to the service levels of the third-party AI provider and Cloudflare Worker processing.
--
 ## Contributing
 
-Contributions to openai-conversion-proxy are welcome! Whether you're fixing bugs, improving the documentation, or adding new features, we appreciate your help in making this project better.
-
-Please submit your contributions via pull requests.
-
-## Support
-
-If you encounter any issues or have questions, please file an issue on the GitHub repository, and the maintainers will address it as soon as possible.
+We welcome contributions from the community! Whether you have a feature request, a bug report, or want to contribute code, please feel free to open an issue or a pull request. For more details on how to contribute, please review our contribution guidelines.
 
 ## License
 
-Open-source licensed under the Apache2.0 License. See the LICENSE file for details.
+This project is licensed under the [Apache 2.0 License](LICENSE). Feel free to fork, modify, and use it in your own projects.
 
-## Disclaimer
+## Acknowledgements
 
-This project is not endorsed by or affiliated with OpenAI. All product names, logos, and brands are property of their respective owners.
+A big thank you to Cloudflare for their Workers platform, which makes projects like this possible. We also appreciate the AI services provided by Azure, OpenAI, and Groq Cloud, which power the intelligence behind this proxy.
 
 ---
 
-By using the openai-conversion-proxy, developers and businesses can optimize their costs while still enjoying the compatibility and convenience offered by OpenAI's ecosystem. Happy coding!
+By deploying this OpenAI Conversion Proxy, you're unlocking a powerful, cost-effective tool for AI research and development. We're excited to see what you build with it!
