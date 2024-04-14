@@ -1,6 +1,6 @@
 # OpenAI Conversion Proxy
 
-Welcome to the OpenAI Conversion Proxy project! This innovative edge computing script is designed to run on Cloudflare Workers, taking full advantage of Cloudflare's generous policy that allows up to 100,000 free invocations per day. This setup makes it perfectly suitable for personal, research, and learning purposes, offering a cost-effective way to leverage AI services from Azure, OpenAI, and Groq Cloud.
+Welcome to the OpenAI Conversion Proxy project! This innovative edge computing script is designed to run on Cloudflare Workers, taking full advantage of Cloudflare's generous policy that allows up to 100,000 free invocations per day. This setup makes it perfectly suitable for personal, research, and learning purposes, offering a cost-effective way to leverage AI services from Azure, OpenAI, Groq Cloud and GlobalGPT.
 
 ## Getting Started
 
@@ -32,7 +32,7 @@ Before deploying, you'll need to configure your project to work with the respect
 ## Usage
 
 Once deployed, your OpenAI Conversion Proxy will act as a middleman between your applications and the AI services, allowing you to:
-- Leverage different AI models from Azure, OpenAI, and Groq Cloud.
+- Leverage different AI models from Azure, OpenAI, Groq Cloud and GlobalGPT.
 - Take advantage of Cloudflare's caching and usage monitoring to optimize costs.
 - Easily switch between AI service providers without major changes to your base code.
 
@@ -46,7 +46,7 @@ This project is licensed under the [Apache 2.0 License](LICENSE). Feel free to f
 
 ## Acknowledgements
 
-A big thank you to Cloudflare for their Workers platform, which makes projects like this possible. We also appreciate the AI services provided by Azure, OpenAI, and Groq Cloud, which power the intelligence behind this proxy.
+A big thank you to Cloudflare for their Workers platform, which makes projects like this possible. We also appreciate the AI services provided by Azure, OpenAI, Groq Cloud and GlobalGPT, which power the intelligence behind this proxy.
 
 ---
 

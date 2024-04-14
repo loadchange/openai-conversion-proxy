@@ -54,4 +54,6 @@ interface Env {
 	OPENAI_API_KEY: string;
 	AZURE_GATEWAY_URL?: string;
 	OPENAI_GATEWAY_URL?: string;
+
+	GLOBALGPT_API_KEY: string;
 }
