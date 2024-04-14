@@ -35,3 +35,5 @@ OPENAI_API_KEY = "sk-xxx"
 OPENAI_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/xxx/xxx/openai"
 
 GROQ_CLOUD_TOKEN = "gsk_xxx"
+
+GLOBALGPT_API_KEY= "xxxxxx"

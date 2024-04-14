@@ -71,3 +71,12 @@ export const models = async (modelsMapping: any) =>
  * @returns
  */
 export const isNotEmpty = <T>(arr: any): arr is T[] => Array.isArray(arr) && arr.length > 0;
+
+/**
+ * Return the length of the array
+ * always return a number
+ * anything that does not get the length of the array will get 0
+ * @param obj
+ * @returns
+ */
+export const listLen = (obj: any): number => (isNotEmpty(obj) ? obj.length : 0);
