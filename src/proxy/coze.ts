@@ -129,14 +129,12 @@ const proxy: IProxy = async (request: Request, token: string, body: any, url: UR
 
   if (listLen(env.COZE_BOT_IDS) > 1) {
     env.COZE_BOT_IDS.forEach((item) => {
-      if (item.gpt35Default) {
-        gpt35 = item.botId;
+      if (item.gpt35Default || item.gpt4Default) {
+        if (item.gpt35Default) gpt35 = item.botId;
+        if (item.gpt4Default) gpt4 = item.botId;
+      } else {
+        otherMapping[item.modelName] = item.botId;
       }
-      if (item.gpt4Default) {
-        gpt4 = item.botId;
-        return;
-      }
-      otherMapping[item.modelName] = item.botId;
     });
   }
 
@@ -150,11 +148,9 @@ const proxy: IProxy = async (request: Request, token: string, body: any, url: UR
     return new Response('404 Not Found', { status: 404 });
   }
 
-  // default bot_id is gpt4
-  let bot_id = gpt4;
-
+  let bot_id = '';
   // if the model is number, then use it as bot_id
-  if (/\d/.test(body?.model)) {
+  if (body?.model && !isNaN(Number(body?.model))) {
     bot_id = body?.model;
   } else {
     bot_id = models_mapping[body?.model as OPEN_AI_MODELS] ?? gpt35;
