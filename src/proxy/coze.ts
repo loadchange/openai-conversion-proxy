@@ -26,14 +26,16 @@ const convertToOpenAIFormat = async (params: IConvertToOpenAIFormatParams) => {
     model,
     message,
     finish_reason,
+    conversation_id,
   }: {
     created: number;
     model: string;
     message: { role: string; content: string };
     finish_reason: null | string;
+    conversation_id?: string;
   }) =>
     JSON.stringify({
-      id: 'chatcmpl-123',
+      id: `chatcmpl-${conversation_id ?? Date.now()}`,
       object: 'chat.completion.chunk',
       created,
       model,
@@ -61,8 +63,8 @@ const convertToOpenAIFormat = async (params: IConvertToOpenAIFormatParams) => {
     let lines = buffer.split(delimiter);
 
     for (let i = 0; i < lines.length - 1; i++) {
-      let { event, message, is_finish } = msg2Obj(lines[i]);
-      if (event === 'done') {
+      let { event, message, conversation_id, is_finish } = msg2Obj(lines[i]);
+      if (['error', 'done'].includes(event)) {
         finished = true;
         buffer = lines[i];
         break;
@@ -77,9 +79,9 @@ const convertToOpenAIFormat = async (params: IConvertToOpenAIFormatParams) => {
         model: params.model,
         message: is_finish ? delimiter : message,
         finish_reason: is_finish ? 'stop' : null,
+        conversation_id,
       });
       await writer.write(encoder.encode('data: ' + openAIFormat + delimiter));
-      await sleep(20);
     }
 
     buffer = lines[lines.length - 1];
@@ -156,7 +158,7 @@ const proxy: IProxy = async (request: Request, token: string, body: any, url: UR
     }
     return new Response(
       JSON.stringify({
-        id: 'chatcmpl-123',
+        id: `chatcmpl-${data?.conversation_id ?? Date.now()}`,
         object: 'chat.completion',
         created,
         model: body?.model ?? 'gpt-3.5-turbo-1106',
@@ -164,7 +166,7 @@ const proxy: IProxy = async (request: Request, token: string, body: any, url: UR
         choices: [
           {
             index: 0,
-            message: isNotEmpty(data?.messages) ? data.messages.filter((item) => item?.role === 'assistant' && item?.type === 'answer') : [],
+            message: isNotEmpty(data?.messages) ? data.messages.filter((item: any) => item?.role === 'assistant' && item?.type === 'answer') : [],
             logprobs: null,
             finish_reason: 'stop',
           },
