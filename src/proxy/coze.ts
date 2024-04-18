@@ -127,7 +127,13 @@ const proxy: IProxy = async (request: Request, token: string, body: any, url: UR
     return new Response('404 Not Found', { status: 404 });
   }
 
-  const payload = {
+  const bot_id = models_mapping[body?.model as OPEN_AI_MODELS] ?? gpt35;
+  const stream = Boolean(body?.stream);
+  const query = body?.messages?.slice(-1)?.[0]?.content || '';
+  const chat_history = body?.messages?.slice(0, -1) || [];
+  const custom_variables = Object.create(null);
+
+	const payload = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -136,16 +142,10 @@ const proxy: IProxy = async (request: Request, token: string, body: any, url: UR
       Connection: 'keep-alive',
       Authorization: `Bearer ${token}`,
     },
-    body: '{}',
+    body: JSON.stringify({ bot_id, conversation_id: '', user: 'User', query, chat_history, stream, custom_variables }),
   };
-  const bot_id = models_mapping[body?.model as OPEN_AI_MODELS] ?? gpt35;
-  const stream = Boolean(body?.stream);
-  const query = body?.messages?.slice(-1)?.[0]?.content || '';
-  const chat_history = body?.messages?.slice(0, -1) || [];
-  const custom_variables = Object.create(null);
 
-  payload.body = JSON.stringify({ bot_id, conversation_id: '', user: 'User', query, chat_history, stream, custom_variables });
-  let { readable, writable } = new TransformStream();
+	let { readable, writable } = new TransformStream();
   const fetchAPI = 'https://api.coze.com/open_api/v2/chat';
   let response = await fetch(fetchAPI, payload);
   response = new Response(response.body, response);
