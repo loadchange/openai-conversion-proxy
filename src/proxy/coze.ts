@@ -1,4 +1,4 @@
-import { sleep, models, generativeModelMappings, isNotEmpty, listLen, JSONParse, gatherResponse } from '../utils';
+import { models, generativeModelMappings, isNotEmpty, listLen, JSONParse, gatherResponse } from '../utils';
 
 /**
  * API Docs: https://www.coze.com/open/docs
@@ -57,11 +57,14 @@ const convertToOpenAIFormat = async (params: IConvertToOpenAIFormatParams) => {
   while (!finished) {
     const { value, done } = await reader.read();
     if (done) {
-      break;
+      if (buffer) {
+        break;
+      } else {
+        finished = true;
+      }
     }
     buffer += decoder.decode(value, { stream: true });
     let lines = buffer.split(delimiter);
-
     for (let i = 0; i < lines.length - 1; i++) {
       let { event, message, conversation_id, is_finish } = msg2Obj(lines[i]);
       if (['error', 'done'].includes(event)) {
@@ -88,7 +91,22 @@ const convertToOpenAIFormat = async (params: IConvertToOpenAIFormatParams) => {
   }
 
   if (buffer) {
-    const { event } = msg2Obj(buffer);
+    const { event, code, msg } = msg2Obj(buffer);
+    if (code && msg) {
+      await writer.write(
+        encoder.encode(
+          `data: ${openAiTemplate({
+            created: params.created,
+            model: params.model,
+            message: { role: 'assistant', content: msg },
+            finish_reason: 'stop',
+            conversation_id: '123',
+          })}${delimiter}`
+        )
+      );
+      await writer.write(encoder.encode('data: [DONE]' + delimiter));
+      await writer.write(encodedNewline);
+    }
     if (event === 'done') {
       await writer.write(encoder.encode('data: [DONE]' + delimiter));
       await writer.write(encodedNewline);
@@ -107,13 +125,18 @@ const proxy: IProxy = async (request: Request, token: string, body: any, url: UR
   }
 
   let [gpt35, gpt4] = Array(2).fill(env.COZE_BOT_IDS[0].botId);
-  const otherMapping = Object.create(null);
+  const otherMapping: { [key: string]: string } = {};
 
-  if (listLen(env.COZE_BOT_IDS[0]) > 1) {
+  if (listLen(env.COZE_BOT_IDS) > 1) {
     env.COZE_BOT_IDS.forEach((item) => {
-      if (item.gpt35Default) gpt35 = item.botId;
-      if (item.gpt4Default) gpt4 = item.botId;
-      otherMapping[item.modelName] = otherMapping[item.botId];
+      if (item.gpt35Default) {
+        gpt35 = item.botId;
+      }
+      if (item.gpt4Default) {
+        gpt4 = item.botId;
+        return;
+      }
+      otherMapping[item.modelName] = item.botId;
     });
   }
 
@@ -127,13 +150,22 @@ const proxy: IProxy = async (request: Request, token: string, body: any, url: UR
     return new Response('404 Not Found', { status: 404 });
   }
 
-  const bot_id = models_mapping[body?.model as OPEN_AI_MODELS] ?? gpt35;
+  // default bot_id is gpt4
+  let bot_id = gpt4;
+
+  // if the model is number, then use it as bot_id
+  if (/\d/.test(body?.model)) {
+    bot_id = body?.model;
+  } else {
+    bot_id = models_mapping[body?.model as OPEN_AI_MODELS] ?? gpt35;
+  }
+
   const stream = Boolean(body?.stream);
   const query = body?.messages?.slice(-1)?.[0]?.content || '';
   const chat_history = body?.messages?.slice(0, -1) || [];
   const custom_variables = Object.create(null);
 
-	const payload = {
+  const payload = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -145,7 +177,7 @@ const proxy: IProxy = async (request: Request, token: string, body: any, url: UR
     body: JSON.stringify({ bot_id, conversation_id: '', user: 'User', query, chat_history, stream, custom_variables }),
   };
 
-	let { readable, writable } = new TransformStream();
+  let { readable, writable } = new TransformStream();
   const fetchAPI = 'https://api.coze.com/open_api/v2/chat';
   let response = await fetch(fetchAPI, payload);
   response = new Response(response.body, response);
