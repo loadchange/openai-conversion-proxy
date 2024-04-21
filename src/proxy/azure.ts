@@ -57,7 +57,7 @@ const getResourceNameAndToken = (model: string, env: Env) => {
   return resourceInfo;
 };
 
-const proxy: IProxy = async (request: Request, _: string, body: any, url: URL, env: Env) => {
+const proxy: IProxy = async (request: Request, body: any, url: URL, env: Env) => {
   // Remove the leading /v1/ from url.pathname
   const action = url.pathname.replace(/^\/+v1\/+/, '');
 

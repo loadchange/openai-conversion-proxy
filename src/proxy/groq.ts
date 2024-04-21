@@ -37,9 +37,6 @@ import { models, generativeModelMappings } from '../utils';
 const MODELS = ['llama3-8b-8192', 'llama3-70b-8192', 'llama2-70b-4096', 'mixtral-8x7b-32768', 'gemma-7b-it'];
 const [LLaMA3_8b_8k, LLaMA3_70b_8k, LLaMA2_70b_8k, Mixtral_8x7b_32k, Gemma_7b_8k] = MODELS;
 
-const MODELS_MAP: { [key: string]: string } = Object.create(null);
-MODELS.forEach((model) => (MODELS_MAP[model] = model));
-
 /**
  * LLaMA3_8b_8k => GPT-3.5 Turbo
  * LLaMA3_70b_8k => GPT-4 Turbo
@@ -49,10 +46,10 @@ MODELS.forEach((model) => (MODELS_MAP[model] = model));
 const MODELS_MAPPING = generativeModelMappings(LLaMA3_8b_8k, LLaMA3_70b_8k, {
   'gpt-4-turbo-2024-04-09': Mixtral_8x7b_32k,
   'gpt-3.5-turbo-0125': Gemma_7b_8k,
-  ...MODELS_MAP,
+  ...MODELS.reduce((acc, model) => ({ ...acc, [model]: model }), {}),
 });
 
-const proxy: IProxy = (request: Request, token: string, body: any, url: URL, env: Env) => {
+const proxy: IProxy = (request: Request, body: any, url: URL, env: Env) => {
   const action = url.pathname.replace(/^\/+v1\/+/, '');
 
   if (action === 'models') return models(MODELS_MAPPING);
@@ -61,7 +58,7 @@ const proxy: IProxy = (request: Request, token: string, body: any, url: URL, env
     method: request.method,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${env.GROQ_CLOUD_TOKEN}`,
     },
     body: '{}',
   };

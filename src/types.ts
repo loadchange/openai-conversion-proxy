@@ -1,4 +1,5 @@
 type OPEN_AI_MODELS =
+  | 'gpt-4-turbo-2024-04-09'
   | 'gpt-4-0125-preview'
   | 'gpt-4-turbo-preview'
   | 'gpt-4-1106-preview'
@@ -16,7 +17,7 @@ type OPEN_AI_MODELS =
   | 'gpt-3.5-turbo-0613'
   | 'gpt-3.5-turbo-16k-0613';
 
-type IProxy = (request: Request, token: string, body: any, url: URL, env: Env) => Promise<Response>;
+type IProxy = (request: Request, body: any, url: URL, env: Env) => Promise<Response>;
 
 interface AzureKey {
   resourceName: string;
@@ -44,26 +45,60 @@ interface CozeBot {
   gpt4Default?: boolean;
 }
 
+interface DeepinfraModel {
+  modelName: string;
+  alias?: string;
+  gpt35Default?: boolean;
+  gpt4Default?: boolean;
+}
+
 interface Env {
   /**
-   * Azure Open AI Custom Key:
-   * The configuration here is not an actual Azure API Key, but a custom key you define.
-   * When the service receives this key, the program will understand that Azure services need to be used.
-   * Since Azure is region-specific, you may need to configure multiple real keys.
-   * However, the key here is used solely for service routing identification and can also ensure the security of the key.
-   * You can change it at any time as you wish.
+   * The key to be used for the custom key
+   * For example, if the key is `sk-xxxxxx##azure`, the service provider is `azure`, the service will route to the Azure service
    */
-  AZURE_OPENAI_CUSTOM_KEY: string;
-  AZURE_API_KEYS: AzureKey[];
-  AZURE_DEPLOY_NAME: AzureDeployName[];
+  CUSTOM_KEY: string;
+
+  /**
+   * Azure Configuration
+   * @website https://azure.com
+   */
+  AZURE_API_KEYS?: AzureKey[];
+  AZURE_DEPLOY_NAME?: AzureDeployName[];
   AZURE_API_VERSION?: string;
-  GROQ_CLOUD_TOKEN: string;
-  OPENAI_API_KEY: string;
   AZURE_GATEWAY_URL?: string;
+
+  /**
+   * Groq Cloud Configuration
+   * @website https://console.groq.com/docs/quickstart
+   */
+  GROQ_CLOUD_TOKEN: string;
+
+  /**
+   * OpenAI Configuration
+   * @website https://platform.openai.com/docs/api-reference
+   */
+  OPENAI_API_KEY: string;
   OPENAI_GATEWAY_URL?: string;
 
+  /**
+   * GlobalGPT Configuration
+   * @website https://glbgpt.com/chat
+   * @deprecated
+   */
   GLOBALGPT_API_KEY: string;
 
+  /**
+   * Coze Configuration
+   * @website https://www.coze.com/open
+   */
   COZE_API_KEY: string;
   COZE_BOT_IDS: CozeBot[];
+
+  /**
+   * DeepInfra Configuration
+   * @website https://deepinfra.com
+   */
+  DEEPINFRA_API_KEY: string;
+  DEEPINFRA_DEPLOY_NAME: DeepinfraModel[];
 }
