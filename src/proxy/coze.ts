@@ -115,7 +115,7 @@ const convertToOpenAIFormat = async (params: IConvertToOpenAIFormatParams) => {
   writer.close();
 };
 
-const proxy: IProxy = async (request: Request, token: string, body: any, url: URL, env: Env) => {
+const proxy: IProxy = async (request: Request, body: any, url: URL, env: Env) => {
   // Remove the leading /v1/ from url.pathname
   const action = url.pathname.replace(/^\/+v1\/+/, '');
 
@@ -168,7 +168,7 @@ const proxy: IProxy = async (request: Request, token: string, body: any, url: UR
       Accept: '*/*',
       Host: 'api.coze.com',
       Connection: 'keep-alive',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${env.COZE_API_KEY}`,
     },
     body: JSON.stringify({ bot_id, conversation_id: '', user: 'User', query, chat_history, stream, custom_variables }),
   };

@@ -11,12 +11,12 @@
  * @param env
  * @returns
  */
-const proxy: IProxy = (request: Request, token: string, body: any, url: URL, env: Env) => {
+const proxy: IProxy = (request: Request, body: any, url: URL, env: Env) => {
   const payload = {
     method: request.method,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
     },
     body: body ? JSON.stringify(body) : '{}',
   };
