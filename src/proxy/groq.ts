@@ -1,4 +1,6 @@
 import { models, generativeModelMappings } from '../utils';
+import { google_search_description } from '../tools/google_search';
+import { stream } from './openai';
 
 /**
  * LLaMA3 8b
@@ -37,6 +39,8 @@ import { models, generativeModelMappings } from '../utils';
 const MODELS = ['llama3-8b-8192', 'llama3-70b-8192', 'llama2-70b-4096', 'mixtral-8x7b-32768', 'gemma-7b-it'];
 const [LLaMA3_8b_8k, LLaMA3_70b_8k, LLaMA2_70b_8k, Mixtral_8x7b_32k, Gemma_7b_8k] = MODELS;
 
+const groqCloudRequest = (url: string) => (payload: any) => fetch(url, payload);
+
 /**
  * LLaMA3_8b_8k => GPT-3.5 Turbo
  * LLaMA3_70b_8k => GPT-4 Turbo
@@ -49,7 +53,7 @@ const MODELS_MAPPING = generativeModelMappings(LLaMA3_8b_8k, LLaMA3_70b_8k, {
   ...MODELS.reduce((acc, model) => ({ ...acc, [model]: model }), {}),
 });
 
-const proxy: IProxy = (request: Request, body: any, url: URL, env: Env) => {
+const proxy: IProxy = async (request: Request, body: any, url: URL, env: Env) => {
   const action = url.pathname.replace(/^\/+v1\/+/, '');
 
   if (action === 'models') return models(MODELS_MAPPING);
@@ -64,9 +68,22 @@ const proxy: IProxy = (request: Request, body: any, url: URL, env: Env) => {
   };
   if (body) {
     body.model = MODELS_MAPPING[body?.model as OPEN_AI_MODELS] ?? LLaMA2_70b_8k;
+    if (!body?.tools && !body?.tool_choice && env.GOOGLE_API_KEY && env.GOOGLE_CSE_ID) {
+      body.tools = [google_search_description];
+      body.tool_choice = 'auto';
+    }
     payload.body = JSON.stringify(body);
   }
-  return fetch(`https://api.groq.com/openai/v1/${action}`, payload);
+  // return fetch(`https://api.groq.com/openai/v1/${action}`, payload);
+
+  const groqCloudReq = groqCloudRequest(`https://api.groq.com/openai/v1/${action}`);
+  const response = await groqCloudReq(payload);
+
+  if (!body?.stream) return response;
+
+  const { readable, writable } = new TransformStream();
+  stream(response.body as ReadableStream, writable, env, payload, groqCloudReq);
+  return new Response(readable, response);
 };
 
 export default proxy;

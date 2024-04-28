@@ -1,4 +1,4 @@
-import { sleep, models, generativeModelMappings, isNotEmpty } from '../utils';
+import { models, generativeModelMappings, isNotEmpty } from '../utils';
 
 // support printer mode and add newline
 async function stream(readable: ReadableStream, writable: WritableStream) {
@@ -23,7 +23,6 @@ async function stream(readable: ReadableStream, writable: WritableStream) {
 
     for (let i = 0; i < lines.length - 1; i++) {
       await writer.write(encoder.encode(lines[i] + delimiter));
-      await sleep(20);
     }
 
     buffer = lines[lines.length - 1];

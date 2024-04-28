@@ -101,4 +101,7 @@ interface Env {
    */
   DEEPINFRA_API_KEY: string;
   DEEPINFRA_DEPLOY_NAME: DeepinfraModel[];
+
+	GOOGLE_API_KEY: string;
+	GOOGLE_CSE_ID: string;
 }
