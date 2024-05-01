@@ -21,9 +21,10 @@ export default {
 
     const body: any = request.method === 'POST' ? await request.json() : null;
     const action = url.pathname.replace(/^\/+v1\/+/, '');
+    const builtIn = enableFuncCall && enableFuncCall === 'enable';
 
     // Check if enableFuncCall is set to 'enable' and if body is present and does not have 'tools' and 'tool_choice' properties
-    if (enableFuncCall && enableFuncCall === 'enable' && body && !body.tools && !body.tool_choice) {
+    if (builtIn && body && !body.tools && !body.tool_choice) {
       if (env.GOOGLE_API_KEY && env.GOOGLE_CSE_ID) {
         body.tools = [google_search_description];
         body.tool_choice = 'auto';
@@ -55,6 +56,6 @@ export default {
       }
     }
 
-    return services[serviceName](action, body, env);
+    return services[serviceName](action, body, env, !!builtIn);
   },
 };

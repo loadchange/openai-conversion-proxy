@@ -1,5 +1,4 @@
-import { models, generativeModelMappings, isNotEmpty, requestFactory } from '../utils';
-import { streamByOpenAI } from '../utils/stream';
+import { models, generativeModelMappings, isNotEmpty, requestFactory, streamByOpenAI } from '../utils';
 
 /**
  * Due to varying quota limits across different regions when deploying models on Microsoft Azure,
@@ -22,7 +21,7 @@ const getResourceNameAndToken = (model: string, env: Env) => {
   return resourceInfo;
 };
 
-const proxy: IProxy = async (action: string, body: any, env: Env) => {
+const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: boolean) => {
   let models_maping = Object.create(null);
   let [gpt35, gpt4] = ['', ''];
   if (isNotEmpty(env.AZURE_DEPLOY_NAME)) {
@@ -70,7 +69,14 @@ const proxy: IProxy = async (action: string, body: any, env: Env) => {
   if (!body?.stream) return response;
 
   const { readable, writable } = new TransformStream();
-  streamByOpenAI(response.body as ReadableStream, writable, env, payload, requestFunc);
+  streamByOpenAI({
+    readable: response.body as ReadableStream,
+    writable,
+    env,
+    openAIReq: requestFunc,
+    payload,
+    builtIn: !!builtIn,
+  });
   return new Response(readable, response);
 };
 

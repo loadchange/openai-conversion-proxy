@@ -1,5 +1,4 @@
-import { streamByOpenAI } from '../utils/stream';
-import { requestFactory, openAiPayload } from '../utils';
+import { requestFactory, openAiPayload, streamByOpenAI } from '../utils';
 
 /**
  * OpenAI API
@@ -14,7 +13,7 @@ import { requestFactory, openAiPayload } from '../utils';
  * @param env
  * @returns
  */
-const proxy: IProxy = async (action: string, body: any, env: Env) => {
+const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: boolean) => {
   if (body) {
     body.model = body?.model ?? 'gpt-3.5-turbo-0125';
   }
@@ -24,10 +23,18 @@ const proxy: IProxy = async (action: string, body: any, env: Env) => {
   const requestFunc = requestFactory(`${env.OPENAI_GATEWAY_URL ?? 'https://api.openai.com/v1'}/${action}`);
   const response = await requestFunc(payload);
 
+  if (!builtIn) return response;
   if (!body?.stream) return response;
 
   const { readable, writable } = new TransformStream();
-  streamByOpenAI(response.body as ReadableStream, writable, env, payload, requestFunc);
+  streamByOpenAI({
+    readable: response.body as ReadableStream,
+    writable,
+    env,
+    openAIReq: requestFunc,
+    payload,
+    builtIn: !!builtIn,
+  });
   return new Response(readable, response);
 };
 

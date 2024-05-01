@@ -1,5 +1,4 @@
-import { models, generativeModelMappings, requestFactory, openAiPayload } from '../utils';
-import { streamByOpenAI } from '../utils/stream';
+import { models, generativeModelMappings, requestFactory, openAiPayload, streamByOpenAI } from '../utils';
 
 /**
  * Documentation: https://console.groq.com/docs/models
@@ -19,7 +18,7 @@ const MODELS_MAPPING = generativeModelMappings(
   MODELS.reduce((acc, model) => ({ ...acc, [model]: model }), {})
 );
 
-const proxy: IProxy = async (action: string, body: any, env: Env) => {
+const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: boolean) => {
   if (action === 'models') return models(MODELS_MAPPING);
 
   if (body) {
@@ -29,10 +28,19 @@ const proxy: IProxy = async (action: string, body: any, env: Env) => {
 
   const requestFunc = requestFactory(`https://api.groq.com/openai/v1/${action}`);
   const response = await requestFunc(payload);
+
+  if (!builtIn) return response;
   if (!body?.stream) return response;
 
   const { readable, writable } = new TransformStream();
-  streamByOpenAI(response.body as ReadableStream, writable, env, payload, requestFunc);
+  streamByOpenAI({
+    readable: response.body as ReadableStream,
+    writable,
+    env,
+    openAIReq: requestFunc,
+    payload,
+    builtIn: !!builtIn,
+  });
   return new Response(readable, response);
 };
 
