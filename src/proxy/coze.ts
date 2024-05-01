@@ -115,10 +115,7 @@ const convertToOpenAIFormat = async (params: IConvertToOpenAIFormatParams) => {
   writer.close();
 };
 
-const proxy: IProxy = async (request: Request, body: any, url: URL, env: Env) => {
-  // Remove the leading /v1/ from url.pathname
-  const action = url.pathname.replace(/^\/+v1\/+/, '');
-
+const proxy: IProxy = async (action: string, body: any, env: Env) => {
   if (env.COZE_BOT_IDS && typeof env.COZE_BOT_IDS === 'string') env.COZE_BOT_IDS = JSONParse(env.COZE_BOT_IDS);
   if (!isNotEmpty(env.COZE_BOT_IDS)) {
     return new Response('404 Not Found', { status: 404 });

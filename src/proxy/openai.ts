@@ -1,3 +1,5 @@
+import { requestFactory, openAiPayload, streamByOpenAI } from '../utils';
+
 /**
  * OpenAI API
  * Simply proxy the official OpenAI API.
@@ -11,17 +13,29 @@
  * @param env
  * @returns
  */
-const proxy: IProxy = (request: Request, body: any, url: URL, env: Env) => {
-  const payload = {
-    method: request.method,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-    },
-    body: body ? JSON.stringify(body) : '{}',
-  };
-  const action = url.pathname.replace(/^\/+v1\/+/, '');
-  return fetch(`${env.OPENAI_GATEWAY_URL ?? 'https://api.openai.com/v1'}/${action}`, payload);
+const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: boolean) => {
+  if (body) {
+    body.model = body?.model ?? 'gpt-3.5-turbo-0125';
+  }
+
+  const payload = openAiPayload({ token: env.OPENAI_API_KEY, body });
+
+  const requestFunc = requestFactory(`${env.OPENAI_GATEWAY_URL ?? 'https://api.openai.com/v1'}/${action}`);
+  const response = await requestFunc(payload);
+
+  if (!builtIn) return response;
+  if (!body?.stream) return response;
+
+  const { readable, writable } = new TransformStream();
+  streamByOpenAI({
+    readable: response.body as ReadableStream,
+    writable,
+    env,
+    openAIReq: requestFunc,
+    payload,
+    builtIn: !!builtIn,
+  });
+  return new Response(readable, response);
 };
 
 export default proxy;
