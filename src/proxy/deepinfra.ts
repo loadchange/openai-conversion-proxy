@@ -1,8 +1,6 @@
-import { models, generativeModelMappings, JSONParse, isNotEmpty, listLen } from '../utils';
+import { models, generativeModelMappings, JSONParse, isNotEmpty, listLen, openAiPayload } from '../utils';
 
-const proxy: IProxy = async (request: Request, body: any, url: URL, env: Env) => {
-  const action = url.pathname.replace(/^\/+v1\/+/, '');
-
+const proxy: IProxy = async (action: string, body: any, env: Env) => {
   if (env.DEEPINFRA_DEPLOY_NAME && typeof env.DEEPINFRA_DEPLOY_NAME === 'string') env.DEEPINFRA_DEPLOY_NAME = JSONParse(env.DEEPINFRA_DEPLOY_NAME);
   if (!isNotEmpty(env.DEEPINFRA_DEPLOY_NAME)) {
     return new Response('404 Not Found', { status: 404 });
@@ -26,18 +24,11 @@ const proxy: IProxy = async (request: Request, body: any, url: URL, env: Env) =>
 
   if (action === 'models') return models(MODELS_MAPPING);
 
-  const payload = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${env.DEEPINFRA_API_KEY}`,
-    },
-    body: '{}',
-  };
   if (body) {
     body.model = MODELS_MAPPING[body?.model as OPEN_AI_MODELS] ?? gpt35;
-    payload.body = JSON.stringify(body);
   }
+  const payload = openAiPayload({ token: env.DEEPINFRA_API_KEY, body });
+
   return fetch(`https://api.deepinfra.com/v1/openai/${action}`, payload);
 };
 

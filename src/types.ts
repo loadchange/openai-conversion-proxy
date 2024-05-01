@@ -17,7 +17,7 @@ type OPEN_AI_MODELS =
   | 'gpt-3.5-turbo-0613'
   | 'gpt-3.5-turbo-16k-0613';
 
-type IProxy = (request: Request, body: any, url: URL, env: Env) => Promise<Response>;
+type IProxy = (action: string, body: any, env: Env) => Promise<Response>;
 
 interface AzureKey {
   resourceName: string;
@@ -82,13 +82,6 @@ interface Env {
   OPENAI_GATEWAY_URL?: string;
 
   /**
-   * GlobalGPT Configuration
-   * @website https://glbgpt.com/chat
-   * @deprecated
-   */
-  GLOBALGPT_API_KEY: string;
-
-  /**
    * Coze Configuration
    * @website https://www.coze.com/open
    */
@@ -102,6 +95,6 @@ interface Env {
   DEEPINFRA_API_KEY: string;
   DEEPINFRA_DEPLOY_NAME: DeepinfraModel[];
 
-	GOOGLE_API_KEY: string;
-	GOOGLE_CSE_ID: string;
+  GOOGLE_API_KEY: string;
+  GOOGLE_CSE_ID: string;
 }

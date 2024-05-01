@@ -10,8 +10,8 @@ export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve
 export const generativeModelMappings = (GPT35_TURBO: string, GPT4_TURBO?: string, otherMapping?: any) => {
   if (!GPT4_TURBO) GPT4_TURBO = GPT35_TURBO;
   return {
-		'gpt-4-turbo': GPT4_TURBO,
-		'gpt-4-turbo-2024-04-09': GPT4_TURBO,
+    'gpt-4-turbo': GPT4_TURBO,
+    'gpt-4-turbo-2024-04-09': GPT4_TURBO,
     'gpt-4-0125-preview': GPT4_TURBO,
     'gpt-4-turbo-preview': GPT4_TURBO,
     'gpt-4-1106-preview': GPT4_TURBO,
@@ -120,3 +120,21 @@ export function isJSON(str: any) {
   }
   return false;
 }
+
+export const requestFactory = (url: string) => (payload: any) => fetch(url, payload);
+
+/**
+ * Generates the payload body for OpenAI
+ * @param method The HTTP method (default: 'POST')
+ * @param token The authorization token
+ * @param body The request body
+ * @returns The payload object
+ */
+export const openAiPayload = ({ method = 'POST', token, body }: { method?: string; token: string; body: Record<string, any> }) => ({
+  method,
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  },
+  body: JSON.stringify(body),
+});

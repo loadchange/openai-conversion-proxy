@@ -3,13 +3,12 @@ import groq from './proxy/groq';
 import coze from './proxy/coze';
 import azure from './proxy/azure';
 import openai from './proxy/openai';
-import glbgpt from './proxy/glbgpt';
 import deepinfra from './proxy/deepinfra';
 import { JSONParse } from './utils';
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const services: { [key: string]: IProxy } = { groq, azure, openai, glbgpt, coze, deepinfra };
+    const services: { [key: string]: IProxy } = { groq, azure, openai, coze, deepinfra };
     const url = new URL(request.url);
     if (request.method === 'OPTIONS') return options;
 
@@ -20,6 +19,7 @@ export default {
     if (!token || !serviceName || env.CUSTOM_KEY !== token || !services[serviceName]) return new Response('Not allowed', { status: 403 });
 
     const body = request.method === 'POST' ? await request.json() : null;
+    const action = url.pathname.replace(/^\/+v1\/+/, '');
 
     if (serviceName === 'azure') {
       const objValue: (keyof Env)[] = ['AZURE_DEPLOY_NAME', 'AZURE_API_KEYS'];
@@ -36,6 +36,6 @@ export default {
       if (env.AZURE_API_KEYS && typeof env.AZURE_API_KEYS === 'string') env.AZURE_API_KEYS = JSONParse(env.AZURE_API_KEYS);
     }
 
-    return services[serviceName](request, body, url, env);
+    return services[serviceName](action, body, env);
   },
 };
