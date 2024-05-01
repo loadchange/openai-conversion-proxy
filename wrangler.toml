@@ -3,8 +3,12 @@ main = "src/index.ts"
 compatibility_date = "2024-03-04"
 
 [vars]
+CUSTOM_KEY = "sk-xxx"
+
+GOOGLE_API_KEY = "xxx-xxx"
+GOOGLE_CSE_ID = "xxx"
+
 AZURE_API_VERSION = "2024-02-15-preview"
-AZURE_OPENAI_CUSTOM_KEY = "sk-xxxxxxx"
 AZURE_API_KEYS = [
     { "resourceName" = "us-w", "token" = "xxxxxx", "default" = true },
     { "resourceName" = "us-e", "token" = "xxxxxx", "models" = [
@@ -36,4 +40,17 @@ OPENAI_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/xxx/xxx/openai"
 
 GROQ_CLOUD_TOKEN = "gsk_xxx"
 
-GLOBALGPT_API_KEY= "xxxxxx"
+COZE_API_KEY = "pat_xxxx"
+
+COZE_BOT_IDS = [
+    { "botId" = "7332758701796813850", "gpt35Default" = true, "gpt4Default" = true, "modelName" = "gpt4" },
+    { "botId" = "7337493361170399237", "modelName" = "WebDeveloper" },
+    { "botId" = "7332758701795818950", "modelName" = "GithubExpert" },
+]
+
+DEEPINFRA_API_KEY = "xxxxx"
+DEEPINFRA_DEPLOY_NAME = [
+    { "modelName" = "meta-llama/Meta-Llama-3-8B-Instruct", "gpt35Default" = true },
+    { "modelName" = "meta-llama/Meta-Llama-3-70B-Instruct", "gpt4Default" = true },
+]
+
