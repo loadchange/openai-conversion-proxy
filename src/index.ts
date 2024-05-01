@@ -24,7 +24,7 @@ export default {
     const builtIn = enableFuncCall && enableFuncCall === 'enable';
 
     // Check if enableFuncCall is set to 'enable' and if body is present and does not have 'tools' and 'tool_choice' properties
-    if (builtIn && body && !body.tools && !body.tool_choice) {
+    if (builtIn && body && !body.tools && !body.tool_choice && ['openai', 'azure'].includes(serviceName)) {
       if (env.GOOGLE_API_KEY && env.GOOGLE_CSE_ID) {
         body.tools = [google_search_description];
         body.tool_choice = 'auto';
@@ -50,7 +50,6 @@ export default {
       if (env.DEEPINFRA_DEPLOY_NAME && typeof env.DEEPINFRA_DEPLOY_NAME === 'string') {
         env.DEEPINFRA_DEPLOY_NAME = JSONParse(env.DEEPINFRA_DEPLOY_NAME);
       }
-
       if (!isNotEmpty(env.DEEPINFRA_DEPLOY_NAME)) {
         return new Response('404 Not Found', { status: 404 });
       }

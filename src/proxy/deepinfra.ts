@@ -1,4 +1,4 @@
-import { models, generativeModelMappings, listLen, openAiPayload } from '../utils';
+import { models, generativeModelMappings, listLen, openAiPayload, requestFactory } from '../utils';
 
 const proxy: IProxy = async (action: string, body: any, env: Env) => {
   let [gpt35, gpt4] = Array(2).fill(env.DEEPINFRA_DEPLOY_NAME[0].modelName);
@@ -24,7 +24,8 @@ const proxy: IProxy = async (action: string, body: any, env: Env) => {
   }
   const payload = openAiPayload({ token: env.DEEPINFRA_API_KEY, body });
 
-  return fetch(`https://api.deepinfra.com/v1/openai/${action}`, payload);
+  const requestFunc = requestFactory(`https://api.deepinfra.com/v1/openai/${action}`);
+  return requestFunc(payload);
 };
 
 export default proxy;
