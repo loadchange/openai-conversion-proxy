@@ -1,6 +1,5 @@
 import { streamByOpenAI } from '../utils/stream';
 import { requestFactory, openAiPayload } from '../utils';
-import { google_search_description } from '../tools/google_search';
 
 /**
  * OpenAI API
@@ -18,10 +17,6 @@ import { google_search_description } from '../tools/google_search';
 const proxy: IProxy = async (action: string, body: any, env: Env) => {
   if (body) {
     body.model = body?.model ?? 'gpt-3.5-turbo-0125';
-    if (!body?.tools && !body?.tool_choice && env.GOOGLE_API_KEY && env.GOOGLE_CSE_ID) {
-      body.tools = [google_search_description];
-      body.tool_choice = 'auto';
-    }
   }
 
   const payload = openAiPayload({ token: env.OPENAI_API_KEY, body });

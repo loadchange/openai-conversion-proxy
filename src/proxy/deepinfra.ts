@@ -1,11 +1,6 @@
-import { models, generativeModelMappings, JSONParse, isNotEmpty, listLen, openAiPayload } from '../utils';
+import { models, generativeModelMappings, listLen, openAiPayload } from '../utils';
 
 const proxy: IProxy = async (action: string, body: any, env: Env) => {
-  if (env.DEEPINFRA_DEPLOY_NAME && typeof env.DEEPINFRA_DEPLOY_NAME === 'string') env.DEEPINFRA_DEPLOY_NAME = JSONParse(env.DEEPINFRA_DEPLOY_NAME);
-  if (!isNotEmpty(env.DEEPINFRA_DEPLOY_NAME)) {
-    return new Response('404 Not Found', { status: 404 });
-  }
-
   let [gpt35, gpt4] = Array(2).fill(env.DEEPINFRA_DEPLOY_NAME[0].modelName);
   const otherMapping: { [key: string]: string } = Object.create(null);
 
