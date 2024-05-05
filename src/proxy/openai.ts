@@ -21,7 +21,12 @@ const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: bool
   const payload = openAiPayload({ token: env.OPENAI_API_KEY, body });
 
   const requestFunc = requestFactory(`${env.OPENAI_GATEWAY_URL ?? 'https://api.openai.com/v1'}/${action}`);
-  const response = await requestFunc(payload);
+
+  if (action === 'models') {
+    payload.method = 'GET';
+  }
+
+	const response = await requestFunc(payload);
 
   if (!builtIn) return response;
   if (!body?.stream) return response;
