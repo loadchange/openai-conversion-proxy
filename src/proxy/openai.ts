@@ -26,8 +26,8 @@ const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: bool
     payload.method = 'GET';
   }
 
-	const response = await requestFunc(payload);
-	const responseWithCors = corsAllowed(response);
+  const response = await requestFunc(payload);
+  const responseWithCors = corsAllowed(response);
 
   if (!builtIn) return responseWithCors;
   if (!body?.stream) return responseWithCors;

@@ -119,8 +119,12 @@ export function isJSON(str: any) {
   return false;
 }
 
-export const requestFactory = (url: string) => (payload: any) => fetch(url, payload);
-
+export const requestFactory = (url: string) => (payload: any) => {
+  if (['GET', 'HEAD'].includes(payload.method)) {
+    delete payload.body;
+  }
+  return fetch(url, payload);
+};
 /**
  * Generates the payload body for OpenAI
  * @param method The HTTP method (default: 'POST')
@@ -134,12 +138,19 @@ export const openAiPayload = ({ method = 'POST', token, body }: { method?: strin
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
   },
-  body: JSON.stringify(body),
+  body: body && !['GET', 'HEAD'].includes(method) ? JSON.stringify(body) : undefined,
 });
 
 export const corsAllowed = (response: Response) => {
-  response.headers.set('Access-Control-Allow-Origin', '*');
-  response.headers.set('Access-Control-Allow-Methods', '*');
-  response.headers.set('Access-Control-Allow-Headers', '*');
-  return response;
+  const headers = new Headers(response.headers);
+  headers.set('Access-Control-Allow-Origin', '*');
+  headers.set('Access-Control-Allow-Methods', '*');
+  headers.set('Access-Control-Allow-Headers', '*');
+  return new Response(response?.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+    cf: response.cf,
+    webSocket: response.webSocket,
+  });
 };

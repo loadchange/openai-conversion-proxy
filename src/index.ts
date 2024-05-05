@@ -14,7 +14,7 @@ export default {
     if (request.method === 'OPTIONS') return options;
 
     const authKey = request.headers.get('Authorization')?.replace('Bearer', '')?.trim();
-    if (!authKey) return new Response('Not allowed', { status: 403 });
+    if (!authKey) return new Response('401 Unauthorized', { status: 401 });
 
     const [token, serviceName, enableFuncCall] = authKey.split('##');
     if (!token || !serviceName || env.CUSTOM_KEY !== token || !services[serviceName]) return new Response('Not allowed', { status: 403 });
