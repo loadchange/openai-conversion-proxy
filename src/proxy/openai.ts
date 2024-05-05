@@ -1,4 +1,4 @@
-import { requestFactory, openAiPayload, streamByOpenAI } from '../utils';
+import { requestFactory, openAiPayload, corsAllowed, streamByOpenAI } from '../utils';
 
 /**
  * OpenAI API
@@ -27,9 +27,10 @@ const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: bool
   }
 
 	const response = await requestFunc(payload);
+	const responseWithCors = corsAllowed(response);
 
-  if (!builtIn) return response;
-  if (!body?.stream) return response;
+  if (!builtIn) return responseWithCors;
+  if (!body?.stream) return responseWithCors;
 
   const { readable, writable } = new TransformStream();
   streamByOpenAI({
@@ -40,7 +41,7 @@ const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: bool
     payload,
     builtIn: !!builtIn,
   });
-  return new Response(readable, response);
+  return corsAllowed(new Response(readable, response));
 };
 
 export default proxy;

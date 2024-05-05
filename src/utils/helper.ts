@@ -1,5 +1,3 @@
-export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 /**
  * Maps the generative model names to the actual model names
  * @param GPT35_TURBO The name of the GPT-3.5 Turbo model
@@ -138,3 +136,10 @@ export const openAiPayload = ({ method = 'POST', token, body }: { method?: strin
   },
   body: JSON.stringify(body),
 });
+
+export const corsAllowed = (response: Response) => {
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  response.headers.set('Access-Control-Allow-Methods', '*');
+  response.headers.set('Access-Control-Allow-Headers', '*');
+  return response;
+};
