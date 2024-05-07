@@ -75,6 +75,12 @@ interface Env {
   GROQ_CLOUD_TOKEN: string;
 
   /**
+   * Deepseek Configuration
+   * @website https://platform.deepseek.com/api_keys
+   */
+  DEEP_SEEK_TOKEN: string;
+
+  /**
    * OpenAI Configuration
    * @website https://platform.openai.com/docs/api-reference
    */
