@@ -34,35 +34,37 @@ export const generativeModelMappings = (GPT35_TURBO: string, GPT4_TURBO?: string
  * @returns
  */
 export const models = async (modelsMapping: any) =>
-  new Response(
-    JSON.stringify({
-      object: 'list',
-      data: Object.keys(modelsMapping).map((id) => ({
-        id,
-        object: 'model',
-        created: 1710035972,
-        owned_by: 'openai',
-        permission: [
-          {
-            id: 'modelperm-M56FXnG1AsIr3SXq8BYPvXJA',
-            object: 'model_permission',
-            created: 1709949572,
-            allow_create_engine: false,
-            allow_sampling: true,
-            allow_logprobs: true,
-            allow_search_indices: false,
-            allow_view: true,
-            allow_fine_tuning: false,
-            organization: '*',
-            group: null,
-            is_blocking: false,
-          },
-        ],
-        root: id,
-        parent: null,
-      })),
-    }),
-    { headers: { 'Content-Type': 'application/json' } }
+  corsAllowed(
+    new Response(
+      JSON.stringify({
+        object: 'list',
+        data: Object.keys(modelsMapping).map((id) => ({
+          id,
+          object: 'model',
+          created: 1710035972,
+          owned_by: 'openai',
+          permission: [
+            {
+              id: 'modelperm-M56FXnG1AsIr3SXq8BYPvXJA',
+              object: 'model_permission',
+              created: 1709949572,
+              allow_create_engine: false,
+              allow_sampling: true,
+              allow_logprobs: true,
+              allow_search_indices: false,
+              allow_view: true,
+              allow_fine_tuning: false,
+              organization: '*',
+              group: null,
+              is_blocking: false,
+            },
+          ],
+          root: id,
+          parent: null,
+        })),
+      }),
+      { headers: { 'Content-Type': 'application/json' } }
+    )
   );
 
 export const gatherResponse = async (response: Response) => {

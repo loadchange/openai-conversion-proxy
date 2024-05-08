@@ -1,20 +1,20 @@
 import { models, generativeModelMappings, requestFactory, openAiPayload, corsAllowed } from '../utils';
 
 /**
- * Documentation: https://console.groq.com/docs/models
+ * Documentation: https://platform.deepseek.com/api-docs/api/list-models/
  */
-const MODELS = ['llama3-8b-8192', 'llama3-70b-8192', 'llama2-70b-4096', 'mixtral-8x7b-32768', 'gemma-7b-it'];
+const MODELS = ['deepseek-coder', 'deepseek-chat'];
 
 /**
  * Mapping of model names to their corresponding GPT versions.
  *
  * Model names:
- * - Mixtral_8x7b_32k (mixtral-8x7b-32768) => GPT-3.5 ALL
- * - LLaMA3_70b_8k (llama3-70b-8192) => GPT-4 ALL
+ * - deepseek-coder (Good at coding tasks: 16K) => GPT-3.5 ALL
+ * - deepseek-chat (Good at general tasks	32K) => GPT-4 ALL
  */
 const MODELS_MAPPING = generativeModelMappings(
-  'mixtral-8x7b-32768',
-  'llama3-70b-8192',
+  'deepseek-coder',
+  'deepseek-chat',
   MODELS.reduce((acc, model) => ({ ...acc, [model]: model }), {})
 );
 
@@ -22,11 +22,11 @@ const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: bool
   if (action === 'models') return models(MODELS_MAPPING);
 
   if (body) {
-    body.model = MODELS_MAPPING[body?.model as OPEN_AI_MODELS] ?? 'llama3-70b-8192';
+    body.model = MODELS_MAPPING[body?.model as OPEN_AI_MODELS] ?? 'deepseek-chat';
   }
-  const payload = openAiPayload({ token: env.GROQ_CLOUD_TOKEN, body });
+  const payload = openAiPayload({ token: env.DEEP_SEEK_TOKEN, body });
 
-  const requestFunc = requestFactory(`https://api.groq.com/openai/v1/${action}`);
+  const requestFunc = requestFactory(`https://api.deepseek.com/v1/${action}`);
   const response = await requestFunc(payload);
   const responseWithCors = corsAllowed(response);
   return responseWithCors;

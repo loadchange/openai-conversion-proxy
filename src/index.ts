@@ -4,12 +4,13 @@ import coze from './proxy/coze';
 import azure from './proxy/azure';
 import openai from './proxy/openai';
 import deepinfra from './proxy/deepinfra';
+import deepseek from './proxy/deepseek';
 import { google_search_description } from './tools/google_search';
 import { JSONParse, isNotEmpty } from './utils';
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const services: { [key: string]: IProxy } = { groq, azure, openai, coze, deepinfra };
+    const services: { [key: string]: IProxy } = { groq, azure, openai, coze, deepinfra, deepseek };
     const url = new URL(request.url);
     if (request.method === 'OPTIONS') return options;
 
