@@ -39,6 +39,7 @@ OPENAI_API_KEY = "sk-xxx"
 OPENAI_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/xxx/xxx/openai"
 
 GROQ_CLOUD_TOKEN = "gsk_xxx"
+GROQ_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/:uuid/:user/groq"
 
 COZE_API_KEY = "pat_xxxx"
 
@@ -53,4 +54,3 @@ DEEPINFRA_DEPLOY_NAME = [
     { "modelName" = "meta-llama/Meta-Llama-3-8B-Instruct", "gpt35Default" = true },
     { "modelName" = "meta-llama/Meta-Llama-3-70B-Instruct", "gpt4Default" = true },
 ]
-
