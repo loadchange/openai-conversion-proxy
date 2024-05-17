@@ -26,7 +26,8 @@ const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: bool
   }
   const payload = openAiPayload({ token: env.GROQ_CLOUD_TOKEN, body });
 
-  const requestFunc = requestFactory(`https://api.groq.com/openai/v1/${action}`);
+  const groqGatewayUrl = env.GROQ_GATEWAY_URL ?? 'https://api.groq.com/openai/v1';
+  const requestFunc = requestFactory(`${groqGatewayUrl}/${action}`);
   const response = await requestFunc(payload);
   const responseWithCors = corsAllowed(response);
   return responseWithCors;

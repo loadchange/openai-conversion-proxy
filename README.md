@@ -104,6 +104,10 @@ AZURE_DEPLOY_NAME = [
 - **DeepInfra**: Configured with `DEEPINFRA_API_KEY` and `DEEPINFRA_DEPLOY_NAME`.
 - **GROQ**: Configured with `GROQ_API_KEY`.
 
+## Supplementary Explanation for the Current Revision
+
+With the latest update, Groq now supports the configuration of gateway proxies, enhancing the flexibility and control over request routing. This feature is particularly useful for managing traffic and optimizing performance across different regions or networks. The `wrangler.toml` file has been updated to include a new variable `GROQ_GATEWAY_URL`, allowing users to specify the Groq gateway URL directly. This addition ensures that requests to Groq can be efficiently routed through the specified gateway proxy, providing an additional layer of customization for users leveraging Groq's powerful AI capabilities.
+
 ## Usage Details
 
 ### Token Rules
