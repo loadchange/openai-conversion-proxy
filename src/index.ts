@@ -1,6 +1,6 @@
 import { options } from './constant';
 import groq from './proxy/groq';
-import coze from './proxy/coze';
+import { coze, cozeChina } from './proxy/coze';
 import azure from './proxy/azure';
 import openai from './proxy/openai';
 import deepinfra from './proxy/deepinfra';
@@ -10,7 +10,7 @@ import { JSONParse, isNotEmpty } from './utils';
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const services: { [key: string]: IProxy } = { groq, azure, openai, coze, deepinfra, deepseek };
+    const services: { [key: string]: IProxy } = { groq, azure, openai, coze, cozeChina, deepinfra, deepseek };
     const url = new URL(request.url);
     if (request.method === 'OPTIONS') return options;
 

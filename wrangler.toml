@@ -10,28 +10,28 @@ GOOGLE_CSE_ID = "xxx"
 
 AZURE_API_VERSION = "2024-02-15-preview"
 AZURE_API_KEYS = [
-    { "resourceName" = "us-w", "token" = "xxxxxx", "default" = true },
-    { "resourceName" = "us-e", "token" = "xxxxxx", "models" = [
-        "dall-e-3",
-        "text-embedding-3-small",
-        "text-embedding-3-large",
-    ] },
-    { "resourceName" = "us-nc", "token" = "xxxxxx", "models" = [
-        "gpt-3.5-turbo-0125",
-        "gpt-4-0125-preview",
-    ] },
+	{ "resourceName" = "us-w", "token" = "xxxxxx", "default" = true },
+	{ "resourceName" = "us-e", "token" = "xxxxxx", "models" = [
+		"dall-e-3",
+		"text-embedding-3-small",
+		"text-embedding-3-large",
+	] },
+	{ "resourceName" = "us-nc", "token" = "xxxxxx", "models" = [
+		"gpt-3.5-turbo-0125",
+		"gpt-4-0125-preview",
+	] },
 ]
 AZURE_DEPLOY_NAME = [
-    { "deployName" = "gpt-35-turbo", "modelName" = "gpt-3.5-turbo", "gpt35Default" = true },
-    { "deployName" = "gpt-4-turbo", "modelName" = "gpt-4-turbo-preview", "gpt4Default" = true },
-    { "deployName" = "gpt-4-vision-preview", "modelName" = "gpt-4-vision-preview" },
-    { "deployName" = "gpt-4-vision-preview", "modelName" = "gpt-4-1106-vision-preview" },
-    { "deployName" = "text-embedding-ada-002-2", "modelName" = "text-embedding-ada-002" },
-    { "deployName" = "Dalle3", "modelName" = "dall-e-3" },
-    { "deployName" = "text-embedding-3-large", "modelName" = "text-embedding-3-large" },
-    { "deployName" = "text-embedding-3-small", "modelName" = "text-embedding-3-small" },
-    { "deployName" = "gpt-35-turbo-0125", "modelName" = "gpt-3.5-turbo-0125" },
-    { "deployName" = "gpt-4-turbo-0125", "modelName" = "gpt-4-0125-preview" },
+	{ "deployName" = "gpt-35-turbo", "modelName" = "gpt-3.5-turbo", "gpt35Default" = true },
+	{ "deployName" = "gpt-4-turbo", "modelName" = "gpt-4-turbo-preview", "gpt4Default" = true },
+	{ "deployName" = "gpt-4-vision-preview", "modelName" = "gpt-4-vision-preview" },
+	{ "deployName" = "gpt-4-vision-preview", "modelName" = "gpt-4-1106-vision-preview" },
+	{ "deployName" = "text-embedding-ada-002-2", "modelName" = "text-embedding-ada-002" },
+	{ "deployName" = "Dalle3", "modelName" = "dall-e-3" },
+	{ "deployName" = "text-embedding-3-large", "modelName" = "text-embedding-3-large" },
+	{ "deployName" = "text-embedding-3-small", "modelName" = "text-embedding-3-small" },
+	{ "deployName" = "gpt-35-turbo-0125", "modelName" = "gpt-3.5-turbo-0125" },
+	{ "deployName" = "gpt-4-turbo-0125", "modelName" = "gpt-4-0125-preview" },
 ]
 AZURE_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/xxx/xxx/azure-openai"
 
@@ -41,17 +41,22 @@ OPENAI_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/xxx/xxx/openai"
 GROQ_CLOUD_TOKEN = "gsk_xxx"
 GROQ_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/:uuid/:user/groq"
 
-COZE_API_KEY = "pat_xxxx"
-COZE_API_URL = "https://api.coze.com/open_api/v2/chat"
+COZE_CN_API_KEY = "pat_xxxx"
+COZE_CN_BOT_IDS = [
+	{ "botId" = "7332758701796813850", "gpt35Default" = true, "gpt4Default" = true, "modelName" = "gpt4" },
+	{ "botId" = "7337493361170399237", "modelName" = "WebDeveloper" },
+	{ "botId" = "7332758701795818950", "modelName" = "GithubExpert" },
+]
 
-COZE_BOT_IDS = [
-    { "botId" = "7332758701796813850", "gpt35Default" = true, "gpt4Default" = true, "modelName" = "gpt4" },
-    { "botId" = "7337493361170399237", "modelName" = "WebDeveloper" },
-    { "botId" = "7332758701795818950", "modelName" = "GithubExpert" },
+COZE_GLOBAL_API_KEY = "pat_xxxx"
+COZE_GLOBAL_BOT_IDS = [
+	{ "botId" = "7332758701796813850", "gpt35Default" = true, "gpt4Default" = true, "modelName" = "gpt4" },
+	{ "botId" = "7337493361170399237", "modelName" = "WebDeveloper" },
+	{ "botId" = "7332758701795818950", "modelName" = "GithubExpert" },
 ]
 
 DEEPINFRA_API_KEY = "xxxxx"
 DEEPINFRA_DEPLOY_NAME = [
-    { "modelName" = "meta-llama/Meta-Llama-3-8B-Instruct", "gpt35Default" = true },
-    { "modelName" = "meta-llama/Meta-Llama-3-70B-Instruct", "gpt4Default" = true },
+	{ "modelName" = "meta-llama/Meta-Llama-3-8B-Instruct", "gpt35Default" = true },
+	{ "modelName" = "meta-llama/Meta-Llama-3-70B-Instruct", "gpt4Default" = true },
 ]

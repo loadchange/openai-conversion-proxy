@@ -89,10 +89,17 @@ interface Env {
 
   /**
    * Coze Configuration
+   * @website https://www.coze.cn/docs/developer_guides/coze_api_overview
+   */
+  COZE_CN_API_KEY: string;
+  COZE_CN_BOT_IDS: CozeBot[];
+
+  /**
+   * Coze Configuration
    * @website https://www.coze.com/open
    */
-  COZE_API_KEY: string;
-  COZE_BOT_IDS: CozeBot[];
+  COZE_GLOBAL_API_KEY: string;
+  COZE_GLOBAL_BOT_IDS: CozeBot[];
 
   /**
    * DeepInfra Configuration
