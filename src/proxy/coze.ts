@@ -158,6 +158,10 @@ const proxy: IProxy = async (action: string, body: any, env: Env) => {
   const chat_history = body?.messages?.slice(0, -1) || [];
   const custom_variables = Object.create(null);
 
+  if (!env.COZE_API_URL) {
+    return new Response('COZE_API_URL environment variable is not defined', { status: 500 });
+  }
+
   const payload = {
     method: 'POST',
     headers: {
@@ -171,8 +175,7 @@ const proxy: IProxy = async (action: string, body: any, env: Env) => {
   };
 
   let { readable, writable } = new TransformStream();
-  const fetchAPI = 'https://api.coze.com/open_api/v2/chat';
-  let response = await fetch(fetchAPI, payload);
+  let response = await fetch(env.COZE_API_URL, payload);
   response = new Response(response.body, response);
   response.headers.set('Access-Control-Allow-Origin', '*');
 
