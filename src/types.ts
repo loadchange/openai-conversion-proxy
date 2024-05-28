@@ -73,6 +73,7 @@ interface Env {
    * @website https://console.groq.com/docs/quickstart
    */
   GROQ_CLOUD_TOKEN: string;
+  GROQ_GATEWAY_URL: string;
 
   /**
    * Deepseek Configuration
