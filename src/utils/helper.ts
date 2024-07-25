@@ -9,6 +9,7 @@ export const generativeModelMappings = (GPT35_TURBO: string, GPT4_TURBO?: string
   if (!GPT4_TURBO) GPT4_TURBO = GPT35_TURBO;
   return {
     'gpt-4o': GPT4_TURBO,
+    'gpt-4o-mini': GPT4_TURBO,
     'gpt-4o-2024-05-13': GPT4_TURBO,
     'gpt-4-turbo': GPT4_TURBO,
     'gpt-4-turbo-2024-04-09': GPT4_TURBO,
