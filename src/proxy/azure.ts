@@ -22,19 +22,19 @@ const getResourceNameAndToken = (model: string, env: Env) => {
 };
 
 const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: boolean) => {
-  let models_maping = Object.create(null);
+  let models_mapping = Object.create(null);
   let [gpt35, gpt4] = ['', ''];
   if (isNotEmpty(env.AZURE_DEPLOY_NAME)) {
     env.AZURE_DEPLOY_NAME.forEach((item) => {
       if (item.gpt35Default) gpt35 = item.deployName;
       if (item.gpt4Default) gpt4 = item.deployName;
-      models_maping[item.modelName] = item.deployName;
+      models_mapping[item.modelName] = item.deployName;
     });
   }
   if (!gpt35) return new Response('404 Not Found', { status: 404 });
-  models_maping = generativeModelMappings(gpt35, gpt4, models_maping);
+  models_mapping = generativeModelMappings(gpt35, gpt4, models_mapping);
 
-  if (action === 'models') return models(models_maping);
+  if (action === 'models') return models(models_mapping);
 
   const payload = {
     method: 'POST',
@@ -49,7 +49,7 @@ const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: bool
     return new Response('404 Not Found', { status: 404 });
   }
 
-  const deployName = models_maping[body?.model as OPEN_AI_MODELS] ?? gpt35;
+  const deployName = models_mapping[body?.model as OPEN_AI_MODELS] ?? gpt35;
 
   const { resourceName, token } = getResourceNameAndToken(body?.model as string, env);
   if (!resourceName || !token) {
@@ -58,7 +58,7 @@ const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: bool
 
   payload.headers['api-key'] = token;
 
-  const API_VERSION = env.AZURE_API_VERSION ?? '2024-02-15-preview';
+  const API_VERSION = env.AZURE_API_VERSION ?? '2024-05-01-preview';
   const fetchAPI = env.AZURE_GATEWAY_URL
     ? `${env.AZURE_GATEWAY_URL}/${resourceName}/${deployName}/${action}?api-version=${API_VERSION}`
     : `https://${resourceName}.openai.azure.com/openai/deployments/${deployName}/${action}?api-version=${API_VERSION}`;

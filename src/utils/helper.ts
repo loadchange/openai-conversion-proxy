@@ -8,25 +8,23 @@
 export const generativeModelMappings = (GPT35_TURBO: string, GPT4_TURBO?: string, otherMapping?: any) => {
   if (!GPT4_TURBO) GPT4_TURBO = GPT35_TURBO;
   return {
-    'gpt-4o': GPT4_TURBO,
-    'gpt-4o-mini': GPT4_TURBO,
     'gpt-4o-2024-05-13': GPT4_TURBO,
-    'gpt-4-turbo': GPT4_TURBO,
     'gpt-4-turbo-2024-04-09': GPT4_TURBO,
+    'gpt-4-1106-preview': GPT4_TURBO,
+    'gpt-4o': GPT4_TURBO,
+    'gpt-4-turbo': GPT4_TURBO,
     'gpt-4-0125-preview': GPT4_TURBO,
     'gpt-4-turbo-preview': GPT4_TURBO,
-    'gpt-4-1106-preview': GPT4_TURBO,
-    'gpt-4': GPT4_TURBO,
     'gpt-4-0613': GPT4_TURBO,
-    'gpt-4-32k': GPT4_TURBO,
-    'gpt-4-32k-0613': GPT4_TURBO,
-    'gpt-3.5-turbo-0125': GPT35_TURBO,
+    'gpt-4': GPT4_TURBO,
+    'gpt-4o-mini-2024-07-18': GPT35_TURBO,
+    'gpt-4o-mini': GPT35_TURBO,
     'gpt-3.5-turbo': GPT35_TURBO,
-    'gpt-3.5-turbo-1106': GPT35_TURBO,
     'gpt-3.5-turbo-instruct': GPT35_TURBO,
+    'gpt-3.5-turbo-instruct-0914': GPT35_TURBO,
     'gpt-3.5-turbo-16k': GPT35_TURBO,
-    'gpt-3.5-turbo-0613': GPT35_TURBO,
-    'gpt-3.5-turbo-16k-0613': GPT35_TURBO,
+    'gpt-3.5-turbo-0125': GPT35_TURBO,
+    'gpt-3.5-turbo-1106': GPT35_TURBO,
     ...otherMapping,
   };
 };
@@ -41,15 +39,15 @@ export const models = async (modelsMapping: any) =>
     new Response(
       JSON.stringify({
         object: 'list',
-        data: Object.keys(modelsMapping).map((id) => ({
+        data: Object.keys(modelsMapping).map((id, index) => ({
           id,
           object: 'model',
           created: 1710035972,
           owned_by: 'openai',
           permission: [
             {
-              id: 'modelperm-M56FXnG1AsIr3SXq8BYPvXJA',
-              object: 'model_permission',
+              id: `model-id-${index}`,
+              object: 'model',
               created: 1709949572,
               allow_create_engine: false,
               allow_sampling: true,
