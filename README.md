@@ -135,3 +135,27 @@ We welcome and encourage contributions from community members in any form! If yo
 ## License
 
 This project is released under the MIT license. More details can be found in the [LICENSE](LICENSE) file.
+
+## Supported Models
+
+The project supports the following models:
+
+- GPT-4o
+- GPT-4o-mini
+- GPT-4o-2024-05-13
+- GPT-4-0125-preview
+- GPT-4-turbo-preview
+- GPT-4-1106-preview
+- GPT-4-vision-preview
+- GPT-4-1106-vision-preview
+- GPT-4
+- GPT-4-0613
+- GPT-4-32k
+- GPT-4-32k-0613
+- GPT-3.5-turbo-0125
+- GPT-3.5-turbo
+- GPT-3.5-turbo-1106
+- GPT-3.5-turbo-instruct
+- GPT-3.5-turbo-16k
+- GPT-3.5-turbo-0613
+- GPT-3.5-turbo-16k-0613
