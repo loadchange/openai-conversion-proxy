@@ -3,7 +3,17 @@ import { models, generativeModelMappings, requestFactory, openAiPayload, corsAll
 /**
  * Documentation: https://console.groq.com/docs/models
  */
-const MODELS = ['llama3-8b-8192', 'llama3-70b-8192', 'llama2-70b-4096', 'mixtral-8x7b-32768', 'gemma-7b-it'];
+const MODELS = [
+  'llama3-8b-8192',
+  'llama3-70b-8192',
+  'llama2-70b-4096',
+  'mixtral-8x7b-32768',
+  'gemma-7b-it',
+  'gemma2-9b-it',
+  'llama-3.1-405b-reasoning',
+  'llama-3.1-70b-versatile',
+  'llama-3.1-8b-instant'
+];
 
 /**
  * Mapping of model names to their corresponding GPT versions.
@@ -13,8 +23,8 @@ const MODELS = ['llama3-8b-8192', 'llama3-70b-8192', 'llama2-70b-4096', 'mixtral
  * - LLaMA3_70b_8k (llama3-70b-8192) => GPT-4 ALL
  */
 const MODELS_MAPPING = generativeModelMappings(
-  'mixtral-8x7b-32768',
-  'llama3-70b-8192',
+  'llama-3.1-8b-instant',
+  'llama-3.1-70b-versatile',
   MODELS.reduce((acc, model) => ({ ...acc, [model]: model }), {})
 );
 
