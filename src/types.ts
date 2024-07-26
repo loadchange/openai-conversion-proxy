@@ -19,23 +19,19 @@ type OPEN_AI_MODELS =
 
 type IProxy = (action: string, body: any, env: Env, builtIn?: boolean) => Promise<Response>;
 
-interface AzureKey {
-  resourceName: string;
-  token: string;
-  default?: boolean;
-  models?: string[];
-}
-interface AzureDeployName {
-  deployName: string;
-  modelName: string;
-  /**
-   * Override the default values for all gpt3.5 models
-   */
-  gpt35Default?: boolean;
-  /**
-   * Override the default values for all gpt4 models
-   */
-  gpt4Default?: boolean;
+interface AzureDeploys {
+  [key: string]: {
+    deployName: string;
+    resourceName: string;
+    /**
+     * Override the default values for all gpt3.5 models
+     */
+    gpt35Default?: boolean;
+    /**
+     * Override the default values for all gpt4 models
+     */
+    gpt4Default?: boolean;
+  }
 }
 
 interface CozeBot {
@@ -63,8 +59,8 @@ interface Env {
    * Azure Configuration
    * @website https://azure.com
    */
-  AZURE_API_KEYS?: AzureKey[];
-  AZURE_DEPLOY_NAME?: AzureDeployName[];
+  AZURE_API_KEYS?: { [key: string]: string };
+  AZURE_DEPLOY_NAME?: AzureDeploys;
   AZURE_API_VERSION?: string;
   AZURE_GATEWAY_URL?: string;
 

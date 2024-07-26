@@ -1,4 +1,4 @@
-import { models, generativeModelMappings, isNotEmpty, requestFactory, streamByOpenAI } from '../utils';
+import { models, generativeModelMappings, isNotEmpty, objKeys, listLen, requestFactory, streamByOpenAI } from '../utils';
 
 /**
  * Due to varying quota limits across different regions when deploying models on Microsoft Azure,
@@ -7,34 +7,42 @@ import { models, generativeModelMappings, isNotEmpty, requestFactory, streamByOp
  * @param model
  * @returns
  */
-const getResourceNameAndToken = (model: string, env: Env) => {
-  const resourceInfo = Object.create(null);
-  if (!isNotEmpty(env.AZURE_API_KEYS)) return resourceInfo;
-  for (let i = 0; i < env.AZURE_API_KEYS.length; i++) {
-    const item = env.AZURE_API_KEYS[i];
-    if (isNotEmpty<string>(item.models) && item.models.includes(model)) return item;
-    if (item.default) {
-      resourceInfo.resourceName = item.resourceName;
-      resourceInfo.token = item.token;
+const getResourceNameAndToken = (model: string, env: Env): { resourceName: string, token: string, deployName: string } => {
+  const resourceInfo = { resourceName: '', token: '', deployName: '' };
+  if (!listLen(objKeys(env.AZURE_API_KEYS)) || !listLen(objKeys(env.AZURE_DEPLOY_NAME))) return resourceInfo;
+  const deploy = env.AZURE_DEPLOY_NAME![model];
+  if (deploy) {
+    resourceInfo.resourceName = deploy.resourceName;
+    resourceInfo.token = env.AZURE_API_KEYS![deploy.resourceName];
+    resourceInfo.deployName = deploy.deployName;
+  } else {
+    if (model.startsWith('gpt-')) {
+      const models = objKeys(env.AZURE_DEPLOY_NAME);
+      for (let i = 0; i < models.length; i++) {
+        const modelName = models[i]
+        const deploy = env.AZURE_DEPLOY_NAME![modelName];
+        if (model.startsWith('gpt-4') && deploy.gpt4Default) {
+          resourceInfo.resourceName = deploy.resourceName;
+          resourceInfo.token = env.AZURE_API_KEYS![deploy.resourceName];
+          resourceInfo.deployName = deploy.deployName;
+          break;
+        }
+        if (model.startsWith('gpt-3') && deploy.gpt35Default) {
+          resourceInfo.resourceName = deploy.resourceName;
+          resourceInfo.token = env.AZURE_API_KEYS![deploy.resourceName];
+          resourceInfo.deployName = deploy.deployName;
+          break;
+        }
+      }
     }
   }
   return resourceInfo;
 };
 
 const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: boolean) => {
-  let models_mapping = Object.create(null);
-  let [gpt35, gpt4] = ['', ''];
-  if (isNotEmpty(env.AZURE_DEPLOY_NAME)) {
-    env.AZURE_DEPLOY_NAME.forEach((item) => {
-      if (item.gpt35Default) gpt35 = item.deployName;
-      if (item.gpt4Default) gpt4 = item.deployName;
-      models_mapping[item.modelName] = item.deployName;
-    });
-  }
-  if (!gpt35) return new Response('404 Not Found', { status: 404 });
-  models_mapping = generativeModelMappings(gpt35, gpt4, models_mapping);
 
-  if (action === 'models') return models(models_mapping);
+
+  if (action === 'models') return models(generativeModelMappings('azure'));
 
   const payload = {
     method: 'POST',
@@ -49,9 +57,7 @@ const proxy: IProxy = async (action: string, body: any, env: Env, builtIn?: bool
     return new Response('404 Not Found', { status: 404 });
   }
 
-  const deployName = models_mapping[body?.model as OPEN_AI_MODELS] ?? gpt35;
-
-  const { resourceName, token } = getResourceNameAndToken(body?.model as string, env);
+  const { resourceName, token, deployName } = getResourceNameAndToken(body?.model as string ?? 'gpt-3.5-turbo-0125', env);
   if (!resourceName || !token) {
     return new Response('401 Unauthorized', { status: 401 });
   }

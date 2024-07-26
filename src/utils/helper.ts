@@ -93,6 +93,8 @@ export const isNotEmpty = <T>(arr: any): arr is T[] => Array.isArray(arr) && arr
  */
 export const listLen = (obj: any): number => (isNotEmpty(obj) ? obj.length : 0);
 
+export const objKeys = (obj: any) => Object.keys(obj ?? {});
+
 /**
  * safe JSON parse
  * @param str
