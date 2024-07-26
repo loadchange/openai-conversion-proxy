@@ -6,22 +6,6 @@ send_metrics = false
 [vars]
 CUSTOM_KEY = "sk-xxx"
 
-GOOGLE_API_KEY = "xxx-xxx"
-GOOGLE_CSE_ID = "xxx"
-
-AZURE_API_VERSION = "2024-05-01-preview"
-AZURE_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/xxx/xxx/azure-openai"
-
-[vars.AZURE_API_KEYS]
-us = "xxx"
-north-central-us = "xxx"
-east-us = "xxx"
-
-[vars.AZURE_DEPLOY_NAME]
-gpt-4o = { deployName = "gpt-4o", resourceName = "us", gpt4Default = true }
-gpt-4-0125-preview = { deployName = "gpt-4-turbo-0125", resourceName = "north-central-us" }
-"gpt-3.5-turbo-0125" = { deployName = "gpt-35-turbo-0125", resourceName = "us", gpt35Default = true }
-
 OPENAI_API_KEY = "sk-xxx"
 OPENAI_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/xxx/xxx/openai"
 
@@ -47,3 +31,16 @@ DEEPINFRA_DEPLOY_NAME = [
 	{ modelName = "meta-llama/Meta-Llama-3-8B-Instruct", gpt35Default = true },
 	{ modelName = "meta-llama/Meta-Llama-3-70B-Instruct", gpt4Default = true },
 ]
+
+AZURE_API_VERSION = "2024-05-01-preview"
+AZURE_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/xxx/xxx/azure-openai"
+
+[vars.AZURE_API_KEYS]
+us = "xxx"
+north-central-us = "xxx"
+east-us = "xxx"
+
+[vars.AZURE_DEPLOY_NAME]
+gpt-4o = { deployName = "gpt-4o", resourceName = "us", gpt4Default = true }
+gpt-4-0125-preview = { deployName = "gpt-4-turbo-0125", resourceName = "north-central-us" }
+"gpt-3.5-turbo-0125" = { deployName = "gpt-35-turbo-0125", resourceName = "us", gpt35Default = true }
