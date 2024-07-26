@@ -11,6 +11,7 @@ const getResourceNameAndToken = (model: string, env: Env): { resourceName: strin
   const resourceInfo = { resourceName: '', token: '', deployName: '' };
   if (!listLen(objKeys(env.AZURE_API_KEYS)) || !listLen(objKeys(env.AZURE_DEPLOY_NAME))) return resourceInfo;
   const deploy = env.AZURE_DEPLOY_NAME![model];
+
   if (deploy) {
     resourceInfo.resourceName = deploy.resourceName;
     resourceInfo.token = env.AZURE_API_KEYS![deploy.resourceName];
@@ -19,18 +20,17 @@ const getResourceNameAndToken = (model: string, env: Env): { resourceName: strin
     if (model.startsWith('gpt-')) {
       const models = objKeys(env.AZURE_DEPLOY_NAME);
       for (let i = 0; i < models.length; i++) {
-        const modelName = models[i]
-        const deploy = env.AZURE_DEPLOY_NAME![modelName];
-        if (model.startsWith('gpt-4') && deploy.gpt4Default) {
-          resourceInfo.resourceName = deploy.resourceName;
-          resourceInfo.token = env.AZURE_API_KEYS![deploy.resourceName];
-          resourceInfo.deployName = deploy.deployName;
+        const current = env.AZURE_DEPLOY_NAME![models[i]];
+        if (model.startsWith('gpt-4') && current.gpt4Default) {
+          resourceInfo.resourceName = current.resourceName;
+          resourceInfo.token = env.AZURE_API_KEYS![current.resourceName];
+          resourceInfo.deployName = current.deployName;
           break;
         }
-        if (model.startsWith('gpt-3') && deploy.gpt35Default) {
-          resourceInfo.resourceName = deploy.resourceName;
-          resourceInfo.token = env.AZURE_API_KEYS![deploy.resourceName];
-          resourceInfo.deployName = deploy.deployName;
+        if (model.startsWith('gpt-3') && current.gpt35Default) {
+          resourceInfo.resourceName = current.resourceName;
+          resourceInfo.token = env.AZURE_API_KEYS![current.resourceName];
+          resourceInfo.deployName = current.deployName;
           break;
         }
       }
