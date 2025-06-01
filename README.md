@@ -1,3 +1,24 @@
+# ⚠️ Project Migration Notice
+
+Thank you for your interest in [**openai-conversion-proxy**](https://github.com/loadchange/openai-conversion-proxy)! Here’s an important update:
+
+While this repository served well, I’ve created a more powerful successor — [**apex-ai-proxy**](https://github.com/loadchange/apex-ai-proxy)! 🎉
+
+---
+
+`openai-conversion-proxy` was a project I put a lot of effort into, stable and reliable, and it’s had its time to shine.
+As needs grew, I developed `apex-ai-proxy`, with more features and greater flexibility. There’s some overlap between the two, but going forward all updates and maintenance will focus on `apex-ai-proxy`.
+
+**Please note:**
+- `apex-ai-proxy` offers more features, better architecture, and an improved experience;
+- This repository is now frozen — no further updates or maintenance will be done here;
+- Please prioritize and follow [`apex-ai-proxy`](https://github.com/loadchange/apex-ai-proxy) for the latest features and fixes;
+- Thanks very much if you’ve contributed or provided feedback on this repo!
+
+In short, `openai-conversion-proxy` will rest quietly as an old friend, while `apex-ai-proxy` continues to shine bright. 💡
+
+---
+
 # OpenAI Conversion Proxy
 
 The OpenAI Conversion Proxy is an efficient proxy server designed to provide users access to a variety of different AI model services through a unified interface. Currently, it supports services including but not limited to GROQ, Azure, OpenAI, Coze, and DeepInfra.
